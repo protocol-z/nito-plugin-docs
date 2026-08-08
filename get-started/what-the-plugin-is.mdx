@@ -7,7 +7,7 @@ The Nito plugin lets you call open-weight models like Kimi K3, GLM 5.2, DeepSeek
 
 Your harness keeps running its own model. Ordinary messages never touch Nito, and a call goes through Nito only on the commands you type. Nothing in your existing setup changes.
 
-Every Nito call runs at a named privacy level, and the level comes with the model you pick. Frontier models run anonymized, so the provider gets your question without learning who is asking. Open-weight models go further: retention switched off upstream, and stronger levels running inside attested hardware that hands back proof of what ran. Nito keeps neither the question nor the answer.
+Every Nito call runs at a named privacy level, and the level comes with the model you pick. Frontier models run anonymized, so the provider gets your question without learning who is asking. Open-weight models go further: retention switched off upstream, stronger levels running inside attested hardware that hands back proof of what ran, and the strongest encrypting your question on your own machine before it leaves. Nito keeps neither the question nor the answer.
 
 The commands are the whole surface. In Claude Code they are `/nito:…`; in Codex they are `$nito:…`. Everything else in your session works exactly as before.
 
@@ -34,7 +34,7 @@ The plugin sits *alongside* Claude Code or Codex rather than replacing either on
 
 ## A Privacy Level on Every Call
 
-Pick a model and you have picked its privacy level. The plugin offers three today, up to Confidential.
+Pick a model and you have picked its privacy level. There are four.
 
 <CardGroup cols={2}>
   <Card title="Anonymous">
@@ -45,6 +45,9 @@ Pick a model and you have picked its privacy level. The plugin offers three toda
   </Card>
   <Card title="Confidential">
     The model runs inside attested hardware. Nito checks the attestation before you see the answer, and blocks the response if the check fails.
+  </Card>
+  <Card title="Encrypted">
+    Your question is encrypted on your own machine against the hardware's key, so nothing in between can read it. Web search, file uploads, and tool calls are switched off at this level. Not yet available in the plugin; the plugin reaches up to Confidential today.
   </Card>
 </CardGroup>
 
