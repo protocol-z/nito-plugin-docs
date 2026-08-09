@@ -1,37 +1,38 @@
 ---
 title: "Anonymous"
-description: "The lightest privacy level and the default. Standard routing with metadata-only retention, on the broadest set of models."
+description: "The frontier rung. Your identity is detached from the request before the provider sees it."
 ---
 
-Anonymous is the first rung of the [privacy ladder](/privacy/levels) and the one most calls use. It is the default level for every provider. It is the right choice for low-sensitivity work where you want the widest model selection and the least overhead, and where you do not need a proof that a specific sealed environment ran your call.
+Anonymous is the first rung of the [privacy ladder](/privacy/levels) and the level frontier models run at. The provider gets your request from Nito, without your identity attached. Reach for it when you want a frontier model and the call does not need retention switched off upstream or a proof of where it ran.
 
 ## What Anonymous Is
 
-Anonymous is the baseline posture of the plugin. When you pick a model whose level is Anonymous, your call runs in the Anonymous level. The routing is standard: Nito selects a healthy, eligible, cost-effective backend and serves your request without tying it to a strong privacy boundary. Anonymous is what "ordinary" routing means in practice for a model whose level is Anonymous.
+Nito sits between you and the model provider. Your account and your identity stop at Nito, and the provider receives the request from Nito and answers it. The provider sees the content of the request. It does not see who sent it.
 
-Because Anonymous is the default level across providers, it is also the broadest. Most of the catalog is reachable at Anonymous. Confidential and Encrypted, by contrast, come from specific providers only, so climbing the ladder always narrows the set of models you can pick from.
+That is the whole guarantee, and it is the most that can be arranged for a model only its own provider can serve. A frontier model runs on its provider's own infrastructure, so there is no way to switch retention off on their side or to seal the execution in hardware. Detaching your identity is what remains available, and it is worth having.
 
 ## What Anonymous Guarantees
 
-The guarantee at Anonymous is **metadata-only retention by default**. Nito keeps operational metadata about the call, not your prompt or the model's reply. Prompts, completions, reasoning, tool payloads, and attachment contents are never persisted, and responses are not stored. Where a chat history exists, it is stored on your side, not by Nito.
+- **Your identity is not passed upstream.** The request reaches the provider from Nito.
+- **Nito keeps neither your prompt nor the response.** Prompts, completions, reasoning, tool payloads, and attachment contents are not persisted. Where a chat history exists, it is on your machine.
 
-What Anonymous does **not** carry is any attestation. By design, an Anonymous model carries no attestation, no sealed-execution provider, and no encryption. So Anonymous gives you a sound default retention posture, but no hardware-backed proof of where or how your call ran. If you need that proof, you climb to [Confidential](/privacy/levels/confidential). If you need the upstream provider held to no retention at all, you move to [Private](/privacy/levels/private).
+What Anonymous does not carry is a commitment from the provider about what it does with the request after answering, or any attestation. If you need retention switched off upstream, use [Private](/privacy/levels/private). If you need proof of the environment that ran the call, use [Confidential](/privacy/levels/confidential).
 
 ## How to Select Anonymous
 
-You select Anonymous by picking a model whose level is Anonymous. There is no privacy flag on your command: the level follows the model. Browse the catalog with the `models` command to see each model's privacy reach, then set the one you want with `model` or `--model`.
+You select Anonymous by picking a model whose level is Anonymous. There is no privacy flag on your command: the level follows the model. Browse the catalog with the `models` command to see each model's level, then set the one you want with `model` or `--model`.
 
-If a model's level is Private instead, picking it lands you in [Private](/privacy/levels/private), because the model's own level decides which of the two you get. A model's privacy reach is shown when you browse, so you can confirm the level before you set it.
+Frontier models sit here. Open-weight models start at [Private](/privacy/levels/private) and climb from there, so picking an open-weight model lands you above Anonymous rather than on it. The [Model List](/models/all-models) groups every model by level.
 
 ## Trade-offs
 
-- **Lightest protection.** Anonymous gives you metadata-only retention but no upstream zero-data-retention requirement and no attestation. It is the floor, not a guarantee about a provider's internals.
-- **Broadest availability.** Because Anonymous is the default level for all providers, it reaches the most models and tends to route to the most backends, which helps latency and availability.
-- **No proof to check.** If the value of a call depends on being able to verify where it ran, Anonymous cannot give you that. Pick a Confidential model for an attestation.
+- **No upstream retention promise.** The provider is not held to zero data retention at this level. That is the line between Anonymous and Private.
+- **No proof to check.** If the value of a call depends on verifying where it ran, Anonymous cannot give you that. Pick a Confidential model for an attestation.
+- **The frontier models are here.** The models you cannot get any other way sit at this level, which is the reason to use it.
 
 ## When to Choose Anonymous
 
-Reach for Anonymous when the request is low-sensitivity and you want speed, choice, and simplicity: public or non-confidential prompts, prototyping, internal tooling, or anything where metadata-only retention is enough and you do not need a verifiable execution boundary. Match the level to the sensitivity of the call, and save the stronger rungs for the calls that actually need them.
+Reach for Anonymous when you want a specific frontier model and the request is ordinary work: prototyping, public or non-confidential prompts, general coding questions, anything where detaching your identity is enough. When the content itself is sensitive, move to a model that carries a stronger level and let the level travel with it.
 
 ## Related Resources
 
@@ -49,7 +50,7 @@ Reach for Anonymous when the request is low-sensitivity and you want speed, choi
   </Card>
 
   <Card title="Private Level" icon="phone-circle" href="/privacy/levels/private">
-    Privately served models with the upstream provider held to zero data retention.<br />
+    Open-weight models with the upstream provider held to zero data retention.<br />
   </Card>
 
   <Card title="Confidential Level" icon="phone-circle" href="/privacy/levels/confidential">
