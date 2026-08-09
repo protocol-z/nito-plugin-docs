@@ -26,6 +26,10 @@ The adapter exposes exactly these tools, each with the `nito.` prefix. The set i
 - **`nito.auth_status`** confirms who you are connected as and when the connection expires. It returns metadata only, never the credential itself.
 - **`nito.account_status`** returns your plan and usage. The `compact` projection returns just the rendered status-card fields, including the eligible-Free monthly plugin-request limit, the remaining count, and the UTC reset, and omits identifiers, scopes, and token metadata.
 - **`nito.models_list`** lists the catalog. Plain `{}` returns the full compatible list; `projection=picker` returns only `id`, `display_name`, and `privacy_tier`, plus `next_cursor`, `total`, and `catalog_revision` for paging.
+
+<Note>
+`privacy_tier` is the API's name for the model's [privacy level](/privacy/levels). These docs say level; the field kept the older word.
+</Note>
 - **`nito.chat_complete`** is a single, non-streaming completion. It applies the same model policy as the rest of Nito, so premium and privacy rules are enforced here too.
 - **`nito.chat_fusion`** runs a multi-model Fusion and returns each participant plus the synthesis, along with safe attestation fields. It is available over OAuth sign-in.
 
