@@ -3,7 +3,7 @@ title: "Private"
 description: "Models served under an enforced zero-data-retention requirement, so the upstream provider is told not to keep your request. Chosen by picking a Private-level model."
 ---
 
-Private is the second rung of the [privacy ladder](/privacy/levels). It keeps the metadata-only posture of [Anonymous](/privacy/levels/anonymous) and adds one thing on top: the upstream provider is held to **zero-data-retention**, so it is told, contractually and technically, not to keep your request after serving it. Choose Private when you want assurance about the provider's own retention, but do not need the sealed, attested execution of the Confidential and Encrypted levels.
+Private is the second rung of the [privacy ladder](/privacy/levels) and where open-weight models start. Nito keeps neither your prompt nor the response at any level, and Private adds one thing on top: the upstream provider is held to **zero-data-retention**, so it is told, contractually and technically, not to keep your request after serving it. Choose Private when you want assurance about the provider's own retention, but do not need the sealed, attested execution of the Confidential and Encrypted levels.
 
 ## What Private Is
 
@@ -13,15 +13,15 @@ Whether a given model lands you in Anonymous or Private depends on the model, no
 
 ## Zero-Data-Retention
 
-**Zero-data-retention (ZDR)** means the upstream provider is instructed not to keep the request after it has served it. On a Private-level model this requirement is set explicitly, and models that cannot meet it are not carried at the Private level at all. The result is a stronger statement than the Anonymous metadata-only default: not only does nothing on your side persist your prompt and reply, the provider serving the call is held to the same.
+**Zero-data-retention (ZDR)** means the upstream provider is instructed not to keep the request after it has served it. On a Private-level model this requirement is set explicitly, and models that cannot meet it are not carried at the Private level at all. That is what Private adds over Anonymous: Nito holds no prompt or response content either way, and at Private the provider serving the call is held to the same.
 
 What ZDR does **not** give you is a hardware-backed proof. Private is an enforced requirement on the provider, not a sealed environment you can attest. If you need to verify where and how your call ran, that is [Confidential](/privacy/levels/confidential), where you can fetch and check an attestation.
 
 ## What Private Protects
 
-- **No upstream retention.** The provider is told not to keep the request, on top of the metadata-only default.
-- **Inherits Anonymous.** Everything Anonymous gives you (metadata-only retention, responses that are not stored, client-side chat history) still holds.
-- **Privately routed.** The call is placed on a backend configured for the Private level rather than ordinary Anonymous-level routing.
+- **No upstream retention.** The provider is told not to keep the request.
+- **Nothing kept on Nito's side.** Your prompt and the response are not persisted, responses are not stored, and chat history stays on your machine. That holds at every level.
+- **Privately routed.** The call is placed on a backend configured for the Private level.
 
 ## How to Select Private
 

@@ -11,7 +11,7 @@ Read the four as a ladder. Each rung adds a stronger guarantee and, in exchange,
 
 | Level | How you reach it | What it adds |
 | :-- | :-- | :-- |
-| **Anonymous** | Pick a model whose level is Anonymous | Metadata-only retention by default |
+| **Anonymous** | Pick a model whose level is Anonymous | Your identity detached before the provider sees the request |
 | **Private** | Pick a model whose level is Private | Upstream provider held to zero data retention |
 | **Confidential** | Pick a model that offers Confidential | Sealed execution with a verifiable attestation |
 | **Encrypted** | Pick a model that offers Encrypted | Client-side encryption to the sealed environment |
@@ -49,7 +49,7 @@ If a call cannot be served at the chosen model's level, it **fails with a clear 
 
 <CardGroup cols={2}>
   <Card title="Anonymous" href="/privacy/levels/anonymous">
-    The lightest level and the default. Broad model availability, metadata-only retention.
+    The frontier rung. Your identity is detached before the provider sees the request.
   </Card>
   <Card title="Private" href="/privacy/levels/private">
     Privately served models with no upstream retention.
