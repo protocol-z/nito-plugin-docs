@@ -54,8 +54,12 @@ Full detail, including what each protects and what it costs you, is in [The Four
 
 The two strongest levels replace a promise with something you can check. A Confidential call runs inside a sealed environment that produces a **signed attestation**, and you can verify that attestation yourself rather than take the claim on trust.
 
-## Metadata Only, by Default
+## What Nito Keeps, and What the Provider Keeps
 
-Even the lightest level is not a free-for-all. Nito keeps operational metadata about a call, not its contents. Your questions, the replies, reasoning, tool payloads, and attachment contents are used to serve the request and are not stored.
+These are two separate questions, and the levels answer them differently.
+
+Nito keeps operational metadata about a call, not its contents. Your questions, the replies, reasoning, tool payloads, and attachment contents are used to serve the request and are not stored by Nito. That holds at every level.
+
+The provider on the other end is the second question. At [Private](/privacy/levels/private) and above, the provider is held to zero data retention as well. At [Anonymous](/privacy/levels/anonymous) it is not: the frontier provider serving your request handles it under its own retention terms, with your identity detached.
 
 [Data Retention and Visibility](/privacy/data-retention-and-visibility) covers exactly what is kept and who can see what.
