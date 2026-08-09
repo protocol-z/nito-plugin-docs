@@ -37,7 +37,7 @@ Browse with the [`models`](/commands/choosing-a-model) command, then set your mo
 No model offers every level, and the reason is what can be enforced on it.
 
 - **Open-weight models can be served with zero data retention enforced, or run inside confidential hardware.** That is what makes everything above Anonymous possible: retention switched off upstream, sealed execution, an attestation you can check. They start at Private and climb from there.
-- **Frontier models always route through their provider.** The most that can be done is make sure the provider never learns who is asking. That is Anonymous, and it is as far as a frontier model goes.
+- **Frontier models always route through their provider.** What can be done is detach your identity from the request: the provider gets it from Nito, without your identity attached. That is Anonymous, and it is as far as a frontier model goes.
 
 So the ladder is not a quality ranking. It reflects what can be enforced on a given model.
 

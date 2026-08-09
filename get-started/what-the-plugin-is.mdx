@@ -7,7 +7,7 @@ The Nito plugin lets you call open-weight models like Kimi K3, GLM 5.2, DeepSeek
 
 Your harness keeps running its own model. Ordinary messages never touch Nito, and a call goes through Nito only on the commands you type. Nothing in your existing setup changes.
 
-Every Nito call runs at a named privacy level, and the level comes with the model you pick. Frontier models run anonymized, so the provider gets your question without learning who is asking. Open-weight models go further: retention switched off upstream, stronger levels running inside attested hardware that hands back proof of what ran, and the strongest encrypting your question on your own machine before it leaves. Nito keeps neither the question nor the answer.
+Every Nito call runs at a named privacy level, and the level comes with the model you pick. Frontier models run anonymized: the provider gets your question from Nito, without your identity attached. Open-weight models go further: retention switched off upstream, stronger levels running inside attested hardware that hands back proof of what ran, and the strongest encrypting your question on your own machine before it leaves. Nito keeps neither the question nor the answer.
 
 The commands are the whole surface. In Claude Code they are `/nito:…`; in Codex they are `$nito:…`. Everything else in your session works exactly as before.
 
@@ -38,7 +38,7 @@ Pick a model and you have picked its privacy level. There are four.
 
 <CardGroup cols={2}>
   <Card title="Anonymous">
-    Frontier models, routed so the provider gets your question without learning who is asking.
+    Frontier models, routed so the provider gets your question from Nito, without your identity attached.
   </Card>
   <Card title="Private">
     Open-weight models, with retention switched off upstream, so the provider does not store your question or the answer.
@@ -81,9 +81,9 @@ Claude Code and Codex are equals. The same commands exist in both; only the trig
 
 <CardGroup cols={2}>
   <Card title="Install on Claude Code" icon="download" href="/get-started/install-claude-code">
-    Install, authorize, and run your first ask. Under two minutes.
+    Install, authorize, and run your first ask.
   </Card>
   <Card title="Install on Codex" icon="terminal" href="/get-started/install-codex">
-    Install, authorize, and run your first ask. Under two minutes.
+    Install, authorize, and run your first ask.
   </Card>
 </CardGroup>
