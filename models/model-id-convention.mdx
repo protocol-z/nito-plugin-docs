@@ -23,24 +23,21 @@ google/gemini-3.1-pro-preview
 
 You do not hold accounts with those providers or manage their keys. The ID is just the catalog name Nito uses so you can reach the model through one plugin.
 
-## The `:confidential` Marker
+## The `:confidential` and `:encrypted` Markers
 
-Some models also appear in a **Confidential** variant, whose ID carries a `:confidential` marker at the end:
+Some models also appear in a stronger variant, whose ID carries a marker at the end:
 
 ```text
-z-ai/glm-5.2                 # the Private-tier entry
-z-ai/glm-5.2:confidential    # the Confidential-tier entry
+z-ai/glm-5.2                 # the Private entry
+z-ai/glm-5.2:confidential    # the Confidential entry
+z-ai/glm-5.2:encrypted       # the Encrypted entry
 ```
 
-These are two separate catalog entries. You do not invent the marker or staple it onto any model; it is part of the name of a model that offers the Confidential level, and you select that entry the same way you select any model. Choosing the `:confidential` entry runs your call in a sealed environment you can verify. The [Model List](/models/all-models) shows which models have a Confidential entry.
-
-<Note>
-The catalog also has an **Encrypted** level, but Encrypted is **not yet available through the plugin**. Today the plugin reaches up to Confidential. See [Encrypted](/privacy/levels/encrypted).
-</Note>
+These are separate catalog entries. You do not invent the marker or staple it onto any model; it is part of the name of a model that offers that level, and you select the entry the same way you select any model. Choosing the `:confidential` entry runs your call in a sealed environment you can verify. Choosing the `:encrypted` entry adds client-side encryption on top, and turns off web search, file attachments, tools, and streaming. The [Model List](/models/all-models) shows which models have each entry.
 
 ## The Level Is Part of the Model
 
-This is the key idea: a model's privacy level is a property of the model you choose, not a separate switch you flip. The plain entry and the `:confidential` entry are different models at different levels. Because the level travels with the model, it cannot drift, and it never silently downgrades: if a model cannot serve a call at its level, the call fails with a clear message rather than dropping to something weaker. See [Level Follows the Model](/privacy/levels).
+This is the key idea: a model's privacy level is a property of the model you choose, not a separate switch you flip. The plain entry, the `:confidential` entry, and the `:encrypted` entry are different models at different levels. Because the level travels with the model, it cannot drift, and it never silently downgrades: if a model cannot serve a call at its level, the call fails with a clear message rather than dropping to something weaker. See [Level Follows the Model](/privacy/levels).
 
 ## Logical Names, Not Backends
 
