@@ -1,0 +1,118 @@
+---
+title: "Commit Message Git Hook"
+description: "Prefill your commit messages from the staged diff with a Nito git hook, using nito ask over stdin, that fails open so it never blocks a commit."
+---
+
+**Goal.** Stop writing commit messages by hand. This recipe installs a `prepare-commit-msg` git hook that sends your staged diff to Nito and prefills the commit-message editor with a suggestion you can accept or edit. It **fails open**: if Nito is unavailable, the commit proceeds untouched, so the hook can never block your work.
+
+**When to reach for it.** Any repo where you want consistent one-line commit messages without the friction. It runs locally on every `git commit`.
+
+## How It Works
+
+Git runs a `prepare-commit-msg` hook after you type `git commit` but before the editor opens, and passes it the path to the commit-message file (and, for some commit types, a source). The hook reads your staged diff, pipes it to `nito ask --stdin --quiet`, and writes the one-line suggestion into that file, where it appears prefilled in your editor.
+
+Two design choices keep it safe:
+
+- **It only prefills a plain `git commit`.** For `git commit -m`, merges, squashes, and amends, the message already exists, and git sets a commit source in those cases. The hook checks for that source and exits without touching anything.
+- **It fails open.** The suggestion is written only if `nito ask` succeeded. If Nito is down or you are offline, the commit proceeds with the normal empty template. A helper that blocks commits would be worse than no helper.
+
+## Prerequisites
+
+- **Nito installed and signed in.** See [Nito CLI](/cli/reference).
+- A git repository.
+
+## Step 1: Install the hook
+
+Save this as `.git/hooks/prepare-commit-msg` in your repo and make it executable (`chmod +x .git/hooks/prepare-commit-msg`):
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="$1"
+COMMIT_SOURCE="${2:-}"
+
+# Only prefill a plain `git commit`. Skip -m, merges, squashes, and amends,
+# which already carry a message ($COMMIT_SOURCE is set in those cases).
+[ -n "$COMMIT_SOURCE" ] && exit 0
+
+diff=$(git diff --staged)
+[ -z "$diff" ] && exit 0
+
+# Ask Nito for a one-line message. Fail open: on any error, leave the commit
+# untouched so the hook never blocks you.
+if suggestion=$(
+  {
+    echo "Write a one-line Conventional Commits message (type: summary) for this"
+    echo "staged diff. Imperative mood, under 72 characters, no body, no backticks:"
+    echo
+    echo "$diff"
+  } | nito ask --stdin --quiet --web-search off 2>/dev/null
+); then
+  # Prepend the suggestion above the existing template in the message file
+  printf '%s\n\n%s\n' "$suggestion" "$(cat "$MSG_FILE")" > "$MSG_FILE"
+fi
+```
+
+The parts that matter:
+
+- **`COMMIT_SOURCE` guard** skips the hook whenever a message already exists, so it only prefills a plain `git commit`.
+- **`--stdin`** takes the whole prompt from the pipe, so the instruction and the diff go in together.
+- **`--quiet`** returns only the message text, nothing to strip.
+- **`if suggestion=$(…); then`** writes the file only on success, which is what makes the hook fail open.
+
+## Step 2: Use it
+
+```bash
+git add -p
+git commit          # editor opens with a suggested message prefilled
+```
+
+Accept the suggestion, edit it, or clear it and write your own. Nothing is committed until you save and close the editor as usual.
+
+## Step 3: Test it without committing
+
+To see what the hook would produce without making a commit, run its core against your staged changes directly:
+
+```bash
+{ echo "Write a one-line Conventional Commits message for this diff, no backticks:"; git diff --staged; } \
+  | nito ask --stdin --quiet --web-search off
+```
+
+Stage a small change first, then run it, and tune the instruction until the style is what you want.
+
+## Variations
+
+**Team-shared hook.** `.git/hooks` is not committed, so it is per-clone. To share the hook across a team, keep it in the repo (for example `scripts/hooks/`) and point git at that directory once:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+**Richer messages.** Ask for a subject line and a short body by changing the instruction, for example: "a Conventional Commits subject line, then a blank line, then two bullet points."
+
+**Pin a private model.** Keep diffs off any frontier provider by pinning a fast Private-tier model in the hook's `nito ask` line:
+
+```bash
+... | nito ask --stdin --quiet --web-search off --model z-ai/glm-5.2 2>/dev/null
+```
+
+## Troubleshooting
+
+| What you see | Why | Fix |
+| :-- | :-- | :-- |
+| No suggestion appears | Nito was unavailable, or nothing was staged | The hook fails open by design; stage changes and check `nito agent status` |
+| The hook does not run | Not executable, or wrong path | `chmod +x .git/hooks/prepare-commit-msg`; confirm the exact filename |
+| It overwrites a `-m` message | The `COMMIT_SOURCE` guard was removed | Keep the `[ -n "$COMMIT_SOURCE" ] && exit 0` line |
+| Message has stray quotes or fences | The model added formatting | Add "no backticks, no quotes" to the instruction |
+
+## Where to Go Next
+
+<CardGroup cols={2}>
+  <Card title="Private Code Review Pipeline" icon="shield-halved" href="/cookbook/private-code-review">
+    Review the same staged diff across models before you commit.
+  </Card>
+  <Card title="Scripting and Automation" icon="terminal" href="/cli/scripting-and-automation">
+    Exit codes, stdin, and output modes for hooks and pipelines.
+  </Card>
+</CardGroup>

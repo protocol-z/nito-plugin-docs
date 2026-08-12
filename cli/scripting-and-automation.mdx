@@ -1,0 +1,104 @@
+---
+title: "Scripting and Automation"
+description: "Use nito from scripts, pipelines, git hooks, and CI: output formats, exit codes, piping, and quiet output."
+---
+
+`nito ask` and `nito fusion` print their answer to standard output and then exit, so they compose like any other Unix tool. This page covers the parts you need when Nito runs inside a script or pipeline rather than in front of a person.
+
+## Output Formats
+
+| Mode | Flag | What you get |
+| :-- | :-- | :-- |
+| Pretty | (default) | Colored, formatted output for reading in a terminal. |
+| Quiet | `--quiet` | Only the answer or the value you asked for, nothing else. |
+| JSON | `--json` | A structured object for a successful response, for machines to parse. |
+| No color | `--no-color` | Plain text with no ANSI codes, for logs and files. |
+
+`--quiet` and `--verbose` are mutually exclusive. The `NO_COLOR` environment variable is honored, so `NO_COLOR=1 nito ask ...` also drops color.
+
+```bash
+# machine-readable, then pull one field
+nito ask --json "Return three tags for this repo." | jq -r '.tags[]'
+
+# just the answer, copied to the clipboard
+nito ask --quiet "Write a one-line commit message for these changes." | pbcopy
+```
+
+<Note>
+`--json` structures a **successful** response. Errors always print as plain text to **standard error** and set a non-zero exit code, so a script can tell success from failure without parsing anything.
+</Note>
+
+## Exit Codes
+
+Nito exits `0` on success and non-zero on failure. Branch on that directly:
+
+```bash
+if answer=$(nito ask --quiet "Is this diff safe to merge? Answer yes or no."); then
+  echo "Nito said: $answer"
+else
+  echo "Nito call failed" >&2
+  exit 1
+fi
+```
+
+Progress indicators are written to standard error, and only when the output is an interactive terminal. So redirected output and pipelines stay clean, and capturing stdout never picks up a spinner.
+
+## Piping Input
+
+`--stdin` reads the prompt from standard input. The piped text becomes the **whole** prompt, so you cannot also pass a prompt argument (Nito rejects that combination). To ask a question about piped content, put the question into the stream:
+
+```bash
+# combine your question and the content into one piped prompt
+{ echo "What is the root cause of this error?"; cat error.log; } | nito ask --stdin
+```
+
+For files, prefer `--file`, which attaches an image or document without reshaping your prompt:
+
+```bash
+nito ask --file ./trace.txt "Summarize the failure in this trace."
+```
+
+## Recipes
+
+<Tabs>
+  <Tab title="Shell script">
+    ```bash
+    #!/usr/bin/env bash
+    set -euo pipefail
+    msg=$(git diff --staged | { echo "Write a concise commit message for this diff:"; cat; } | nito ask --stdin --quiet)
+    echo "$msg"
+    ```
+  </Tab>
+  <Tab title="Git hook">
+    ```bash
+    # .git/hooks/prepare-commit-msg
+    #!/usr/bin/env bash
+    diff=$(git diff --staged)
+    [ -z "$diff" ] && exit 0
+    { echo "Suggest a commit message for this diff:"; echo "$diff"; } \
+      | nito ask --stdin --quiet >> "$1"
+    ```
+  </Tab>
+  <Tab title="CI step">
+    ```bash
+    # fail the job if Nito flags the change
+    verdict=$(nito ask --quiet "Reply RISK or OK only. Any secrets in this diff? $(git diff --staged)")
+    [ "$verdict" = "OK" ] || { echo "Nito flagged a risk" >&2; exit 1; }
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+Privacy still applies in scripts exactly as it does in a chat. A scripted `nito ask` runs at the privacy level of the model it uses, and `--json` or `--quiet` change only the **shape** of the output, never where the request goes. See [Privacy Levels](/privacy/overview).
+</Note>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Nito CLI" icon="terminal" href="/cli/reference">
+    The full command surface and flags on one page.
+  </Card>
+  <Card title="Document Q&A Pipeline" icon="folder-tree" href="/cookbook/batch-document-qa">
+    A recipe using `--json` output and client-side validation over many files.
+  </Card>
+</CardGroup>

@@ -1,0 +1,155 @@
+---
+title: "Multi Model Answer Checker"
+description: "Cross-check Claude Code or Codex's own answer against independent models with Nito Fusion, without leaving your session, so confident-but-wrong answers surface before you act on them."
+---
+
+**Goal.** Your harness runs one model, and a single model can be confidently wrong. This recipe cross-checks your host model's answer against two or three **independent** models with Fusion, right inside the same Claude Code or Codex session, so a contested or incorrect claim shows up instead of hiding behind one model's confidence. Nothing else lets you do this without leaving your session.
+
+**When to reach for it.** A design call, a security claim, a tricky algorithm, a "which library" decision, anything where being wrong is expensive. For an ordinary question you already trust, you do not need it.
+
+## How It Works
+
+A single model has blind spots, and it states a wrong answer with the same fluency as a right one. You cannot tell which from the answer alone.
+
+Fusion breaks that by asking several models the same question at once and reconciling their answers. The result has two parts: each model's own take, and a **synthesis with a "where the candidates disagree" section**. That disagreement map is the point. It tells you whether a question is settled or contested, and exactly where the models split, so you can compare that against what your host model told you.
+
+Because it runs through the plugin, all of this happens **inside your existing session**. You do not copy the question into another tool or lose your context; you get an independent panel in the same place you are already working.
+
+## Prerequisites
+
+- **Nito installed and signed in** in Claude Code or Codex. See [Install on Claude Code](/get-started/install-claude-code) or [Install on Codex](/get-started/install-codex).
+- **A paid plan** (Fusion is a paid feature). The single-model check below works on Free.
+
+## Step 1: Get your host model's answer
+
+Ask your harness as you normally would, for example:
+
+> Should this service use optimistic or pessimistic locking for its inventory counter?
+
+Your host model answers. Keep that answer in mind for the comparison.
+
+## Step 2: Cross-check with a panel
+
+Send the same question to two or three independent models with Fusion. Name models from **different families** so the panel is genuinely independent, not three variations of one lineage:
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```text
+    /nito:fusion openai/gpt-5.5 z-ai/glm-5.2 google/gemini-3.5-flash -- Should a high-contention inventory counter use optimistic or pessimistic locking? Answer in 3 sentences with the deciding tradeoff.
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```text
+    $nito:fusion openai/gpt-5.5 z-ai/glm-5.2 google/gemini-3.5-flash -- Should a high-contention inventory counter use optimistic or pessimistic locking? Answer in 3 sentences with the deciding tradeoff.
+    ```
+  </Tab>
+</Tabs>
+
+{/* PLACEHOLDER: swap in final launch model IDs when the catalog is confirmed. */}
+
+## Step 3: Read the synthesis against your host model
+
+Fusion returns each model's answer plus a synthesis. Abridged and representative:
+
+```text
+Nito · Hosted Fusion · 3 participants · judge: openai/gpt-5.5 · status: complete
+
+1. openai/gpt-5.5        leans optimistic + retry; contention is bursty, not sustained
+2. z-ai/glm-5.2          pessimistic; a hot counter serializes anyway
+3. google/gemini-3.5     optimistic with a fallback to a row lock under contention
+
+Synthesis
+   Recommendation: optimistic with bounded retry, fall back to a row lock if
+   retries exceed a threshold. Where they disagree: how hot the counter really
+   is. If one row is updated constantly, pessimistic wins; if contention is
+   bursty, optimistic wins.
+```
+
+Now compare against your host model:
+
+- **The panel agrees with your host model:** you have independent corroboration. Move on.
+- **The panel splits:** the question is genuinely contested. The disagreement map tells you on what, so you can decide deliberately instead of trusting one voice.
+- **The panel disagrees with your host model:** the strongest signal. Read why, and re-examine the host's answer before you act on it.
+
+## Verify a Specific Claim
+
+To check one concrete statement rather than re-ask the whole question, paste the claim and ask a single independent model whether it holds. This works on Free:
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```text
+    /nito:ask --model openai/gpt-5.5 Is this correct? "A UUID v4 is guaranteed unique across systems." Answer yes or no and explain in one sentence.
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```text
+    $nito:ask --model openai/gpt-5.5 Is this correct? "A UUID v4 is guaranteed unique across systems." Answer yes or no and explain in one sentence.
+    ```
+  </Tab>
+</Tabs>
+
+## Automate It From the Terminal
+
+To cross-check answers outside a chat, or in a loop over several claims, run the same check from the shell. This script takes a claim and reports a panel verdict:
+
+```bash
+#!/usr/bin/env bash
+# second-opinion.sh "claim to verify"
+set -euo pipefail
+
+claim="${1:?usage: second-opinion.sh \"claim to verify\"}"
+
+nito fusion \
+  --model openai/gpt-5.5 --model z-ai/glm-5.2 \
+  --web-search off \
+  "Is this claim correct? \"$claim\" Each of you answer yes or no with a one-sentence reason."
+```
+
+```bash
+./second-opinion.sh "Postgres SERIAL columns are gap-free."
+```
+
+## Variations
+
+**Fact-check with sources.** For a claim about the current state of the world, let the check use web search so it returns citations:
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```text
+    /nito:ask --web-search on What is the current stable release of PostgreSQL, with a source URL?
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```text
+    $nito:ask --web-search on What is the current stable release of PostgreSQL, with a source URL?
+    ```
+  </Tab>
+</Tabs>
+
+**Keep the check private.** If the claim involves proprietary details, verify it with [`private`](/commands/private) so your harness never sends it upstream.
+
+## Troubleshooting
+
+| What you see | Why | Fix |
+| :-- | :-- | :-- |
+| "Fusion requires a paid plan" | You are on Free | Use the single-model `ask` check in "Verify a Specific Claim" |
+| The panel just echoes the host model | The models chosen are too similar | Pick models from different families (a frontier model plus an open-weight one) |
+| A privacy-level error | A Confidential model was mixed with a lower level | Keep Confidential participants in a Confidential-only Fusion. See [Fusion](/commands/fusion) |
+| Web search returns stale data | The search backend declined the query | Rephrase as a clearly time-sensitive question, or try again |
+
+## Where to Go Next
+
+<CardGroup cols={2}>
+  <Card title="Fusion command" icon="layer-group" href="/commands/fusion">
+    Full syntax, how to pick participants, and how privacy levels mix.
+  </Card>
+  <Card title="Private Code Review Pipeline" icon="shield-halved" href="/cookbook/private-code-review">
+    Multi-model review of your changes on Private-tier models.
+  </Card>
+  <Card title="Choosing a Model" icon="list-check" href="/commands/choosing-a-model">
+    How to pick strong, complementary models for a panel.
+  </Card>
+  <Card title="Web Search" icon="globe" href="/features/server-side-tools/web-search">
+    How the web-search modes behave when you fact-check.
+  </Card>
+</CardGroup>

@@ -1,0 +1,209 @@
+---
+title: "Private Code Review Pipeline"
+description: "A complete terminal workflow that reviews your changes across several Private-tier models with Fusion, so proprietary code never reaches your IDE's provider. Includes a production-ready script, output you can act on, and privacy notes."
+---
+
+**Goal.** Get a thorough, multi-model review of your changes without sending proprietary code to your IDE's model provider. This recipe builds a reusable script that reviews a git diff from your terminal, on **Private-tier models** (open-weight models with retention switched off upstream), using **Fusion** so several models review at once and their findings are reconciled into one report.
+
+**When to reach for it.** A pre-commit or pre-PR pass on code you cannot send to a frontier provider, a focused security review of a sensitive module, or a second set of eyes before you push. For a one-off question about a single file, [`nito ask --file`](/cli/ask-and-fusion-from-terminal) is enough; this recipe is for a repeatable review you run on every change.
+
+## How It Works
+
+Three ideas make this both private and useful.
+
+**It runs from your terminal, not your chat.** A `nito` command from the shell is a direct call to Nito. It does not pass through a Claude Code or Codex turn, so your harness's own model provider never sees the diff. That is the first privacy boundary.
+
+**It uses Private-tier models.** Every Nito call runs at the privacy level of the model it uses. Private-tier models are open-weight models routed with **zero data retention** enforced upstream: the provider is instructed not to store your prompt or the response. So the review goes to a model that is told to forget it, not to a frontier provider that may retain it. See [Privacy Levels](/privacy/levels) for the full ladder.
+
+**It uses Fusion, not one model.** A single reviewer, human or model, misses things and has blind spots. Fusion sends the diff to two or three models at once and returns each model's findings plus a synthesis that separates what they agree on from what only one raised. Agreement is a strong signal to act; disagreement tells you where to look closer.
+
+## Prerequisites
+
+- **Nito installed and signed in.** See [Nito CLI](/cli/reference).
+- **A paid plan** for the Fusion version (multi-model). The single-model variation runs on Free.
+- **`git`**, and a repository with changes to review.
+
+## Step 1: Choose your reviewers
+
+List the Private-tier models your account can use and pick two, ideally with different strengths (a coder-tuned model plus a strong general model):
+
+```bash
+# Show only Private-tier models, then note two IDs
+nito agent models
+```
+
+`qwen/qwen3-coder` (code-tuned) and `z-ai/glm-5.2` (strong general) are a good default pair. Any two distinct Private-tier models work; picking different families surfaces more.
+
+## Step 2: A one-line review, to confirm it works
+
+Before scripting, confirm the pieces work with a single command. `--stdin` reads the whole prompt from the pipe, so the instruction and the diff go in together:
+
+```bash
+{ echo "Review this diff for bugs and security issues, most severe first:"; git diff --staged; } \
+  | nito ask --model z-ai/glm-5.2 --web-search off --stdin
+```
+
+If that returns a review, you are ready to script the full multi-model version.
+
+## Step 3: The review script
+
+Save this as `nito-review.sh` and make it executable (`chmod +x nito-review.sh`). It is production-shaped: configurable reviewers, a choice of what to review, a structured review format, and it fails cleanly.
+
+```bash
+#!/usr/bin/env bash
+# nito-review.sh: private, multi-model review of your changes.
+set -euo pipefail
+
+# --- Configuration ----------------------------------------------------------
+# Private-tier reviewers. Add a third for a wider panel.
+MODELS=("qwen/qwen3-coder" "z-ai/glm-5.2")
+# ----------------------------------------------------------------------------
+
+# What to review: default to staged changes; accept a git range as an argument.
+#   ./nito-review.sh                 # staged changes
+#   ./nito-review.sh main...HEAD     # a whole branch
+RANGE="${1:-}"
+if [ -z "$RANGE" ]; then
+  diff=$(git diff --staged)
+else
+  diff=$(git diff "$RANGE")
+fi
+
+if [ -z "$diff" ]; then
+  echo "Nothing to review." >&2
+  exit 0
+fi
+
+# Build the Fusion --model arguments from the MODELS array.
+model_args=()
+for m in "${MODELS[@]}"; do model_args+=(--model "$m"); done
+
+# The review. A structured format keeps the output scannable and consistent.
+{
+  echo "You are a senior code reviewer. Review this git diff for bugs, security"
+  echo "issues, and correctness problems. Report each finding on one line as:"
+  echo "  SEVERITY  file:line  problem  ->  suggested fix"
+  echo "Order by severity, most severe first. Skip pure style nits. Be terse."
+  echo
+  echo "$diff"
+} | nito fusion "${model_args[@]}" --web-search off --stdin
+```
+
+The parts that matter:
+
+- **`MODELS` array** keeps your reviewers in one place. Add a third ID for a wider panel; remove one to go faster.
+- **`RANGE` argument** lets the same script review staged changes (the default) or a whole branch (`./nito-review.sh main...HEAD`).
+- **Structured format** (`SEVERITY  file:line  problem -> fix`) makes the output consistent enough to skim or grep.
+- **`--web-search off`** keeps the run self-contained; a code review needs no web lookup.
+- **`--stdin`** carries the instruction and diff together, because it cannot also take a prompt argument.
+
+## Step 4: Run it
+
+```bash
+# Review what you are about to commit
+git add -p
+./nito-review.sh
+
+# Review an entire branch before opening a PR
+./nito-review.sh main...HEAD
+```
+
+## Step 5: Read the output
+
+Fusion prints each model's findings, then a synthesis. Abridged and representative:
+
+```text
+Nito · Hosted Fusion · 2 participants · Private · status: complete
+
+1. qwen/qwen3-coder      Private
+   HIGH   auth.go:42   SQL built with fmt.Sprintf  ->  use a parameterized query
+   MED    auth.go:58   error from rows.Scan ignored  ->  check and return it
+
+2. z-ai/glm-5.2          Private
+   HIGH   auth.go:42   injection risk on interpolated query  ->  parameterize
+   HIGH   handler.go:17  token compared with ==  ->  use a constant-time compare
+
+Synthesis (Private)
+   Act first: auth.go:42 SQL injection (both models) and handler.go:17
+   non-constant-time token compare (one model, but clearly correct).
+   Also worth fixing: unchecked Scan error at auth.go:58. No style noise.
+```
+
+Read it in this order:
+
+1. **Where the models agree** (here, `auth.go:42`) is your highest-confidence finding. Fix it first.
+2. **Where only one model flags something** (`handler.go:17`, `auth.go:58`) is worth a look; a real issue often shows up in only one reviewer.
+3. **The synthesis** gives you the reconciled, deduplicated list without either model's noise.
+
+## Reviewing a Single File or Directory
+
+For a focused pass, attach one file instead of a diff:
+
+```bash
+# Review one file
+nito ask --model z-ai/glm-5.2 --web-search off --file ./src/auth.py \
+  "Review this file for security bugs, most severe first."
+
+# Loop over a directory, one review per file
+for f in src/*.py; do
+  echo "=== $f ==="
+  nito ask --model z-ai/glm-5.2 --web-search off --file "$f" \
+    "List security issues in this file as SEVERITY file:line problem -> fix."
+done
+```
+
+## Machine-Readable Output
+
+To feed the review into a report or a PR comment, use `ask --json` and pull the content:
+
+```bash
+{ echo "Review this diff. Return findings as prose:"; git diff --staged; } \
+  | nito ask --model z-ai/glm-5.2 --web-search off --stdin --json \
+  | jq -r '.content' > review.md
+```
+
+The `--json` object also carries `model` and `privacy_route`, so a report can record exactly which model reviewed the code and at what privacy level.
+
+## Variations
+
+**Free-tier single reviewer.** Fusion needs a paid plan; `ask` does not:
+
+```bash
+{ echo "Review this diff for bugs and security issues, most severe first:"; git diff --staged; } \
+  | nito ask --model z-ai/glm-5.2 --web-search off --stdin
+```
+
+**Review from inside your chat.** To review with the host model held back rather than from the terminal, use [`private`](/commands/private): `/nito:private` (Claude Code) or `$nito:private` (Codex) runs the turn incognito so your harness never sends the code upstream.
+
+## Privacy Notes
+
+- **Terminal, not chat.** Running `nito` from the shell means the review never enters a Claude Code or Codex turn, so your harness provider is not in the path at all.
+- **Private tier is retention-off, not secrecy.** The provider is instructed not to store your code; it still processes it to produce the review. For a stronger guarantee where the provider cannot read the input at all, the [Confidential and Encrypted levels](/privacy/levels) run inside attested hardware, subject to model availability.
+- **Fusion mixes levels by the strictest rule.** A Fusion of Private-tier models stays Private. Mixing in a lower level would pull the run down, so keep every reviewer at Private or stronger. See [Fusion](/commands/fusion).
+
+## Troubleshooting
+
+| What you see | Why | Fix |
+| :-- | :-- | :-- |
+| "Fusion requires a paid plan" | You are on Free | Use the single-model `ask` variation |
+| "provide a prompt argument or --stdin, not both" | A prompt and `--stdin` were passed together | Put the instruction into the piped stream, as the script does |
+| "did not complete" or empty output | A chosen model is momentarily down | Swap in another Private-tier model in the `MODELS` array |
+| A privacy-level error from Fusion | A non-Private model was mixed in | Keep every reviewer at Private tier or stronger |
+| The review misses later changes | A very large diff exceeds the model's context | Review per file or per directory with the loop above |
+
+## Where to Go Next
+
+<CardGroup cols={2}>
+  <Card title="Commit Message Git Hook" icon="code-commit" href="/cookbook/commit-message-hook">
+    Automate the next step: generate the commit message from the same diff.
+  </Card>
+  <Card title="Multi Model Answer Checker" icon="scale-unbalanced" href="/cookbook/second-opinion">
+    Cross-check an answer from Claude Code or Codex against independent models.
+  </Card>
+  <Card title="Scripting and Automation" icon="terminal" href="/cli/scripting-and-automation">
+    Output modes, exit codes, and piping for scripts and hooks.
+  </Card>
+  <Card title="Privacy Levels" icon="shield-check" href="/privacy/levels">
+    What Private tier guarantees, and the stronger tiers above it.
+  </Card>
+</CardGroup>

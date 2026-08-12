@@ -1,0 +1,91 @@
+---
+title: "Shell Completions"
+description: "Turn on tab completion for nito commands, flags, and model IDs in bash, zsh, fish, or PowerShell."
+---
+
+`nito` can generate a completion script for your shell, so pressing **Tab** completes commands, flags, and model IDs instead of making you type them out. Generate the script with `nito completion <shell>`.
+
+<Note>
+Model flags complete from your **live catalog**, and a close typo on a model ID gets a suggestion. So `nito ask --model ` then Tab lists the models you can actually use right now.
+</Note>
+
+Pick your shell. In each case, the first block turns completion on for the **current session** (good for a quick try), and the second makes it **permanent**.
+
+<Tabs>
+  <Tab title="zsh">
+    Current session:
+    ```bash
+    source <(nito completion zsh)
+    ```
+
+    Permanent, macOS (Homebrew):
+    ```bash
+    nito completion zsh > $(brew --prefix)/share/zsh/site-functions/_nito
+    ```
+
+    Permanent, Linux:
+    ```bash
+    nito completion zsh > "${fpath[1]}/_nito"
+    ```
+
+    If shell completion is not enabled yet, run this once, then start a new shell:
+    ```bash
+    echo "autoload -U compinit; compinit" >> ~/.zshrc
+    ```
+  </Tab>
+
+  <Tab title="bash">
+    Depends on the `bash-completion` package. Install it with your OS package manager if you do not have it.
+
+    Current session:
+    ```bash
+    source <(nito completion bash)
+    ```
+
+    Permanent, Linux:
+    ```bash
+    nito completion bash > /etc/bash_completion.d/nito
+    ```
+
+    Permanent, macOS (Homebrew):
+    ```bash
+    nito completion bash > $(brew --prefix)/etc/bash_completion.d/nito
+    ```
+  </Tab>
+
+  <Tab title="fish">
+    Current session:
+    ```bash
+    nito completion fish | source
+    ```
+
+    Permanent:
+    ```bash
+    nito completion fish > ~/.config/fish/completions/nito.fish
+    ```
+  </Tab>
+
+  <Tab title="PowerShell">
+    Current session:
+    ```powershell
+    nito completion powershell | Out-String | Invoke-Expression
+    ```
+
+    Permanent: add the line above to your PowerShell profile.
+  </Tab>
+</Tabs>
+
+<Note>
+Start a new shell (or re-source your startup file) for permanent completions to take effect. Run `nito completion <shell> --help` for the exact per-shell notes.
+</Note>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Nito CLI" icon="terminal" href="/cli/reference">
+    The full command surface and flags on one page.
+  </Card>
+  <Card title="Scripting and Automation" icon="gear" href="/cli/scripting-and-automation">
+    Output modes, exit codes, and piping for scripts.
+  </Card>
+</CardGroup>

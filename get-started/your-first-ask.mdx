@@ -54,7 +54,7 @@ Nito · <environment> · <model> · <privacy level> · <context scope>
 A hosted plugin call looks like this:
 
 ```text
-Nito · Hosted · MODEL-ID · private · Prompt only
+Nito · Hosted · z-ai/glm-5.2 · private · Prompt only
 ```
 
 - **environment**: where the call ran. Plugin calls read `Hosted`.
@@ -75,17 +75,19 @@ Override the model for a single call with `--model`:
 <Tabs>
   <Tab title="Claude Code">
     ```text
-    /nito:ask --model MODEL-ID Summarize the tradeoffs of optimistic locking.
+    /nito:ask --model anthropic/claude-haiku-4.5 Summarize the tradeoffs of optimistic locking.
     ```
   </Tab>
   <Tab title="Codex">
     ```text
-    $nito:ask --model MODEL-ID Summarize the tradeoffs of optimistic locking.
+    $nito:ask --model anthropic/claude-haiku-4.5 Summarize the tradeoffs of optimistic locking.
     ```
   </Tab>
 </Tabs>
 
-{/* PLACEHOLDER: swap MODEL-ID for a real launch model once the catalog is final. */}
+<Note>
+The model IDs here are examples. Run `models` to see the live catalog for your account, and pass any logical ID you find to `--model`.
+</Note>
 
 ## Set a Default
 

@@ -1,5 +1,5 @@
 ---
-title: "Ask and Fusion from the Terminal"
+title: "Ask and Fusion"
 description: "Run a single Nito question or a multi-model Fusion directly from the shell, with attachments, JSON output, and piped input."
 ---
 
@@ -14,7 +14,17 @@ nito ask [prompt] [flags]
 A single question to a single Nito model. The answer prints to standard output.
 
 ```bash
+# Basic question
 nito ask "Summarize what a Merkle proof guarantees."
+
+# Pick a specific model
+nito ask --model openai/gpt-5.5 "Write fizzbuzz in Python."
+
+# Attach a document and ask about it
+nito ask --file ./report.pdf "Summarize the top three risks."
+
+# Skip web search for a self-contained prompt
+nito ask --web-search off "What is 7 times 6?"
 ```
 
 ### Options
@@ -32,10 +42,10 @@ nito ask "Summarize what a Merkle proof guarantees."
 
 ### Piping Input
 
-With `--stdin`, the prompt comes from whatever you pipe in, so you can feed a file or another command straight to Nito:
+With `--stdin`, the whole prompt comes from whatever you pipe in. You cannot also pass a prompt argument, so put your question into the piped text:
 
 ```bash
-cat error.log | nito ask --stdin "What is the root cause here?"
+{ echo "What is the root cause of this error?"; cat error.log; } | nito ask --stdin
 ```
 
 ### Structured Output
@@ -55,7 +65,11 @@ nito fusion [--model <id> --model <id>] [prompt] [flags]
 One prompt, two or three models, plus a synthesis. This is the client-side form of [Fusion](/commands/fusion): your machine fans the prompt out and a judge model reconciles the answers.
 
 ```bash
-nito fusion --model model-a --model model-b "Is this contract vulnerable to reentrancy?"
+# Two or three models, one reconciled answer
+nito fusion --model openai/gpt-5.5 --model z-ai/glm-5.2 "Is this contract vulnerable to reentrancy?"
+
+# Choose which model writes the synthesis
+nito fusion --model openai/gpt-5.5 --model z-ai/glm-5.2 --judge openai/gpt-5.5 "Stateless JWTs or server sessions?"
 ```
 
 ### Options
@@ -84,3 +98,14 @@ nito agent models
 ```
 
 See [Choosing a Model](/commands/choosing-a-model) for how the saved default works.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Scripting and Automation" icon="terminal" href="/cli/scripting-and-automation">
+    Output modes, exit codes, and piping for pipelines.
+  </Card>
+  <Card title="Multi Model Answer Checker" icon="scale-unbalanced" href="/cookbook/second-opinion">
+    A full recipe: cross-check an answer against independent models with Fusion.
+  </Card>
+</CardGroup>

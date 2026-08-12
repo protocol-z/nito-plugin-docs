@@ -25,9 +25,14 @@ By default it also sends a **short, billable chat request** to confirm end-to-en
 Use `--skip-smoke` when you only want to inspect local state, or want to avoid the small charge. Use `--repair` when `doctor` reports a broken or stale integration and you want it cleaned up:
 
 ```bash
-nito doctor            # full check, including a live request
-nito doctor --skip-smoke   # local checks only
-nito doctor --repair       # fix local state and drop legacy integrations
+# Full check, including a live request
+nito doctor
+
+# Local checks only, no billable request
+nito doctor --skip-smoke
+
+# Fix local state and drop legacy integrations
+nito doctor --repair
 ```
 
 <Note>
@@ -51,8 +56,11 @@ nito update [flags]
 Run a normal `nito update` to move to a new release. Use `--skip-binary` when the binary is already current (for example it was upgraded by your package manager directly) but you still want the integrations re-synced:
 
 ```bash
-nito update              # upgrade Nito and refresh integrations
-nito update --skip-binary   # only re-sync integrations
+# Upgrade Nito and refresh integrations
+nito update
+
+# Only re-sync integrations (binary already current)
+nito update --skip-binary
 ```
 
 ## A Good Recovery Order
@@ -75,3 +83,14 @@ When something is not working, this sequence resolves most problems:
 </Steps>
 
 For harness-specific reconnection inside a chat, see [When Tools Do Not Load in a Chat](/commands/status-and-account#when-tools-do-not-load-in-a-chat).
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Troubleshooting" icon="wrench" href="/help/troubleshooting">
+    Symptom-first fixes for common problems.
+  </Card>
+  <Card title="Updating and Uninstalling" icon="arrows-rotate" href="/get-started/updating-uninstalling">
+    Keeping Nito current and removing it cleanly.
+  </Card>
+</CardGroup>

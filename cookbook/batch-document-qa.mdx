@@ -1,0 +1,169 @@
+---
+title: "Document Q&A Pipeline"
+description: "Ask questions of a single document or a whole folder of PDFs and office files from your terminal, extract structured JSON fields, validate them, and aggregate the answers into one summary."
+---
+
+**Goal.** You have documents, contracts, invoices, reports, meeting notes, and questions to ask of them. This recipe starts with one file, then scales to a whole folder: it loops `nito ask --file` over each document, collects the answers as JSON, extracts structured fields, and aggregates everything into a single summary. It is the plugin's honest version of document search: Nito parses each file to text and answers over it, with no vector database to stand up.
+
+**When to reach for it.** Extracting one field from every invoice, summarizing a directory of reports, or triaging a stack of documents. Start with the single-file section if you only have one.
+
+## How It Works
+
+Nito ships a server-side [file parser](/features/server-side-tools/file-parser). Attach a document with `--file` and Nito extracts its text **before the model sees it**, so any model can answer, not just a vision model. Supported formats are PDF, DOCX, PPTX, XLSX, XLS, and plain text. Everything below is that one capability, applied once per file and captured as structured output.
+
+<Note>
+There is no vector store, embedding step, or retrieval index here. For a small-to-medium set of documents, parse-and-ask is simpler and needs nothing to run. For a large corpus you query repeatedly, a retrieval pipeline against the API is a better fit; that is a platform, not plugin, workflow.
+</Note>
+
+## Prerequisites
+
+- **Nito installed and signed in.** See [Nito CLI](/cli/reference).
+- **`jq`** for reading the JSON output.
+- Documents in a supported format.
+- **Any plan.** This uses `ask`, available on Free (each file counts as one request).
+
+## Step 1: Ask one document
+
+Start with the building block, a single file:
+
+```bash
+nito ask --file ./report.pdf --web-search off \
+  "Summarize the three biggest risks in this document, each in one sentence."
+```
+
+The answer prints with a label showing which model and privacy level served it. You did not paste any text, and you did not need a special model, Nito parsed the file for you.
+
+## Step 2: The batch script
+
+Save this as `batch-qa.sh` and make it executable. It asks one question of every PDF in a folder and writes a JSON line per document.
+
+```bash
+#!/usr/bin/env bash
+# batch-qa.sh [folder] [question]
+set -euo pipefail
+
+DIR="${1:-./docs}"
+QUESTION="${2:-Summarize this document in two sentences.}"
+OUT="answers.jsonl"
+: > "$OUT"                                  # start a fresh output file
+
+shopt -s nullglob
+files=("$DIR"/*.pdf)
+[ ${#files[@]} -eq 0 ] && { echo "No PDFs in $DIR" >&2; exit 0; }
+
+for file in "${files[@]}"; do
+  echo "Asking: $(basename "$file")" >&2
+
+  # One structured answer per file. --json returns content plus the model
+  # and privacy level that served it.
+  if answer=$(nito ask --file "$file" --web-search off --json "$QUESTION" 2>/dev/null); then
+    echo "$answer" | jq -c --arg file "$(basename "$file")" \
+      '{file: $file, model, privacy_route, content}' >> "$OUT"
+  else
+    echo "  failed: $(basename "$file")" >&2   # skip and continue on error
+  fi
+done
+
+echo "Wrote $(wc -l < "$OUT") answers to $OUT" >&2
+```
+
+The parts that matter:
+
+- **`nullglob` + count check** exits cleanly when the folder has no matching files.
+- **`--file "$file"`** attaches one document; Nito parses it to text server-side.
+- **`--json`** returns a structured object (`content`, `model`, `privacy_route`, token counts).
+- **`if answer=$(…); then`** skips a file that fails and keeps going, instead of aborting the whole batch.
+- **`jq -c … >> "$OUT"`** tags each answer with its filename and appends one JSON object per line (a `.jsonl` file).
+
+## Step 3: Run it
+
+```bash
+# Ask the default question of every PDF in ./contracts
+./batch-qa.sh ./contracts
+
+# Ask a specific question
+./batch-qa.sh ./invoices "What is the total amount due and the due date?"
+```
+
+## Step 4: Read and aggregate
+
+Each line of `answers.jsonl` is one document's answer:
+
+```bash
+# Print every answer with its filename
+jq -r '"\(.file): \(.content)"' answers.jsonl
+```
+
+```text
+acme-2026-01.pdf: Total due 12,500.00 USD, due 2026-03-03.
+globex-2026-02.pdf: Total due 4,200.00 USD, due 2026-02-28.
+initech-2026-02.pdf: Total due 9,900.00 USD, due 2026-03-15.
+```
+
+Roll the whole set up into one summary by feeding the collected answers back through Nito:
+
+```bash
+{ echo "Summarize these per-document answers into three bullet points:"; cat answers.jsonl; } \
+  | nito ask --web-search off --stdin
+```
+
+## Extract Structured Fields
+
+Often you want typed fields, not prose. Nito does not expose server-side JSON-schema enforcement, so the reliable pattern is **prompt for JSON, then validate on your side**. Ask for the exact fields and forbid prose:
+
+```bash
+nito ask --file ./invoice.pdf --web-search off --json \
+  'Return ONLY a JSON object with keys "vendor", "total_usd" (number), and "due_date" (YYYY-MM-DD). No prose, no code fences.'
+```
+
+The model's answer is inside the `content` field, so parse it twice: once for the envelope, once for the content. Treat the content as untrusted until it parses:
+
+```bash
+nito ask --file ./invoice.pdf --web-search off --json \
+  'Return ONLY JSON {"vendor","total_usd","due_date"}. No prose, no fences.' \
+  | jq -r '.content' | jq .        # second jq validates the model's JSON
+```
+
+If the second `jq` fails, do not store the record. Re-ask with a stricter prompt, or validate against your own schema (JSON Schema, Pydantic, Zod) and reject anything that does not fit.
+
+Three things make this reliable: **name every field and its type**, say **"return only JSON, no code fences"**, and give an example shape when the structure is nested.
+
+## Variations
+
+**Keep sensitive documents private.** For confidential files, pin a Private-tier model so the provider does not retain the contents:
+
+```bash
+nito ask --file ./contract.pdf --model z-ai/glm-5.2 --web-search off \
+  "Does this contract auto-renew, and what is the notice period?"
+```
+
+**Other formats.** Change the glob from `*.pdf` to `*.docx`, `*.xlsx`, or a broader pattern to cover a mixed folder.
+
+**Images instead of documents.** A screenshot or photo needs a vision model, not the parser. See [Screenshot Debugger](/cookbook/screenshot-debugging).
+
+## Troubleshooting
+
+| What you see | Why | Fix |
+| :-- | :-- | :-- |
+| "cannot accept image attachments" | A file is an image, not a document | Images need a vision model. See [Image input](/features/multimodal/image-input) |
+| An unsupported-format error | File is not PDF, DOCX, PPTX, XLSX, XLS, or text | Convert it, or narrow the glob |
+| Output wrapped in code fences | The model added Markdown to the JSON | Say "no code fences," or strip fences before the second `jq` |
+| `jq: error` on a line | A call failed or returned non-JSON | The script skips failures; re-run the named file |
+| Answers miss later pages | A very large document exceeds the model's context | Ask about specific sections, or split the file |
+
+## Where to Go Next
+
+<CardGroup cols={2}>
+  <Card title="File parser" icon="file-lines" href="/features/server-side-tools/file-parser">
+    How Nito extracts text from documents, and the supported formats.
+  </Card>
+  <Card title="Screenshot Debugger" icon="image" href="/cookbook/screenshot-debugging">
+    The image path, for screenshots and diagrams.
+  </Card>
+  <Card title="Scripting and Automation" icon="terminal" href="/cli/scripting-and-automation">
+    Output modes, exit codes, and piping for batch scripts.
+  </Card>
+  <Card title="Private Code Review Pipeline" icon="shield-halved" href="/cookbook/private-code-review">
+    The same JSON-and-scripting pattern, applied to code.
+  </Card>
+</CardGroup>

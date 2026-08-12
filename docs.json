@@ -23,9 +23,9 @@
           {
             "group": "Install",
             "pages": [
+              "get-started/requirements",
               "get-started/install-claude-code",
               "get-started/install-codex",
-              "get-started/requirements",
               "get-started/updating-uninstalling"
             ],
             "icon": "download"
@@ -185,8 +185,9 @@
           {
             "group": "Basics",
             "pages": [
-              "cli/cli-overview",
-              "cli/ask-and-fusion-from-terminal"
+              "cli/reference",
+              "cli/ask-and-fusion-from-terminal",
+              "cli/account-and-models"
             ],
             "icon": "terminal"
           },
@@ -201,12 +202,32 @@
           {
             "group": "Advanced",
             "pages": [
+              "cli/shell-completions",
+              "cli/scripting-and-automation",
               "cli/mcp-tools"
             ],
             "icon": "screwdriver-wrench"
           }
         ],
         "icon": "terminal"
+      },
+      {
+        "tab": "Cookbook",
+        "groups": [
+          {
+            "group": "Recipes",
+            "pages": [
+              "cookbook/index",
+              "cookbook/private-code-review",
+              "cookbook/second-opinion",
+              "cookbook/batch-document-qa",
+              "cookbook/screenshot-debugging",
+              "cookbook/commit-message-hook"
+            ],
+            "icon": "book-open"
+          }
+        ],
+        "icon": "book-open"
       },
       {
         "tab": "Plans and Billing",
@@ -310,6 +331,26 @@
     "links": []
   },
   "redirects": [
+    {
+      "source": "/cli/cli-overview",
+      "destination": "/cli/reference"
+    },
+    {
+      "source": "/cli/mcp-hosts",
+      "destination": "/cli/mcp-tools"
+    },
+    {
+      "source": "/cookbook/compare-models-with-fusion",
+      "destination": "/cookbook/second-opinion"
+    },
+    {
+      "source": "/cookbook/document-qa",
+      "destination": "/cookbook/batch-document-qa"
+    },
+    {
+      "source": "/cookbook/structured-extraction",
+      "destination": "/cookbook/batch-document-qa"
+    },
     {
       "source": "/privacy/tiers",
       "destination": "/privacy/levels"

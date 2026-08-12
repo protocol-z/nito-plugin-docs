@@ -1,0 +1,85 @@
+---
+title: "Nito CLI"
+description: "Install the nito command line, sign in, and find every terminal command at a glance, each linking to its full reference."
+---
+
+The `nito` command line brings Nito to your terminal: ask a question, compare models with Fusion, run a private prompt your harness never sees, or launch a full Claude Code or Codex session routed through Nito. One browser sign-in, no API key, reaches every model across every provider, and each answer names the model and privacy level that served it.
+
+If you installed the plugin, you already have it: setup installed `nito` alongside the plugin, and it is what powers `private`, session launches, and file attachments behind the scenes. Most people never run it directly, but reach for it to install or repair a harness, to ask or run Fusion without opening a chat, or to launch a Nito-routed session from a script.
+
+<Note>
+These commands run in your **terminal**. Plugin commands like `/nito:ask` and `$nito:ask` run **inside a Claude Code or Codex session**. Same account either way, but not the same place to type.
+</Note>
+
+## Install
+
+From nothing to a first answer in three commands. No API key: `nito` signs in through your browser and keeps the credential in your OS keychain.
+
+<Steps>
+  <Step title="Install">
+    Requires Node.js 18 or newer.
+    ```bash
+    npm install -g nito-ai
+    nito --version
+    ```
+  </Step>
+  <Step title="Sign in">
+    Opens your browser to approve, then stores the credential locally.
+    ```bash
+    nito agent login
+    nito agent status      # confirm the active profile
+    ```
+  </Step>
+  <Step title="Ask something">
+    ```bash
+    nito ask "Summarize what a Merkle proof guarantees."
+    ```
+    The answer prints with a label showing the model and privacy level that served it.
+  </Step>
+</Steps>
+
+**Using Nito inside Claude Code or Codex instead?** The same binary installs the plugin: run `nito setup claude` or `nito setup codex`. Full walkthroughs: [Claude Code](/get-started/install-claude-code), [Codex](/get-started/install-codex).
+
+## Commands
+
+Every terminal command, with a link to its full reference. Each takes `--help` for its exact flags and defaults.
+
+| Command | What it does | Reference |
+| :-- | :-- | :-- |
+| `nito ask` | Ask one question and print the answer. | [Ask and Fusion](/cli/ask-and-fusion-from-terminal) |
+| `nito fusion` | Run one question across two or three models for a single reconciled answer. | [Ask and Fusion](/cli/ask-and-fusion-from-terminal) |
+| `nito claude` | Start an isolated Claude Code session routed through Nito. | [Session Launchers](/cli/session-launchers) |
+| `nito codex` | Start an isolated Codex session routed through Nito. | [Session Launchers](/cli/session-launchers) |
+| `nito doctor` | Check your install, credentials, and harness integrations. | [Doctor and Update](/cli/doctor-and-update) |
+| `nito update` | Upgrade Nito and refresh managed integrations. | [Doctor and Update](/cli/doctor-and-update) |
+| `nito agent` | Create an account, sign in, check status, browse models, and set your default model. | [Account and Models](/cli/account-and-models) |
+| `nito completion <shell>` | Print a tab-completion script for bash, zsh, fish, or PowerShell. | [Shell Completions](/cli/shell-completions) |
+| `nito setup <harness>` | Install and authorize a harness integration. | [Install on Claude Code](/get-started/install-claude-code) |
+| `nito welcome` | Replay the host-aware welcome message. | |
+
+**Global flags** (any command): `--quiet`, `--verbose`, `--no-color`, `--config <path>`, `--version`, `--help`.
+
+## Going Further
+
+<CardGroup cols={2}>
+  <Card title="Scripting and Automation" icon="terminal" href="/cli/scripting-and-automation">
+    Output formats, exit codes, and piping for pipelines, git hooks, and CI.
+  </Card>
+  <Card title="Nito MCP Server" icon="plug" href="/cli/mcp-tools">
+    Run the MCP server so any host or agent can call the same Nito tools.
+  </Card>
+</CardGroup>
+
+## Highlights
+
+<CardGroup cols={3}>
+  <Card title="Privacy-first" icon="lock" href="/privacy/overview">
+    Browser sign-in, no API key. Every answer names its privacy level, and `private` runs a turn your harness never sends upstream.
+  </Card>
+  <Card title="Every model, one sign-in" icon="layer-group" href="/commands/choosing-a-model">
+    Frontier and open-weight models across providers, reachable from a single command. Compare several at once with Fusion.
+  </Card>
+  <Card title="Scriptable" icon="terminal" href="/cli/scripting-and-automation">
+    Structured JSON output, stdin piping, exit codes, and shell completions for bash, zsh, fish, and PowerShell.
+  </Card>
+</CardGroup>

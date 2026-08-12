@@ -1,17 +1,58 @@
 ---
-title: "MCP Tools"
-description: "The tools the hosted Nito connection exposes over MCP, for wiring Nito into your own agents. Optional at launch."
+title: "Nito MCP Server"
+description: "Run Nito's MCP server so Claude Desktop, Cursor, or your own agent can call the same Nito tools the plugin uses, over stdio, with no API key."
 ---
 
-The plugin's hosted connection speaks the **Model Context Protocol (MCP)**. Most users never touch it directly; the plugin calls these tools for you. This page is for people building their own agent or integration who want to call Nito the same way the plugin does.
+Nito ships an **MCP server** inside the command line tool. It proxies the hosted Nito tools over stdio, so any Model Context Protocol host, Claude Desktop, Cursor, or your own agent, can call Nito the way the plugin does. There is no separate package to install: the server is `nito agent mcp serve`.
 
 <Note>
-This is optional at launch. You do not need any of it to use the plugin. If you only want to prompt Nito from Claude Code, Codex, or the terminal, the other CLI pages cover everything.
+Most users never need this. The plugin already connects to Nito for `/nito:` and `$nito:` commands. Reach for the MCP server when you want a **different** host, or your own agent, to call the same Nito tools directly. Optional at launch.
 </Note>
+
+## Quick Start
+
+<Steps>
+  <Step title="Install and sign in">
+    Install the command line tool (see [Install on Claude Code](/get-started/install-claude-code)), then sign in once. Unlike servers that take an API key in the config, Nito authenticates through `nito agent login` and stores a credential in your OS keychain, so no key or token goes into your host config.
+
+    ```bash
+    nito agent login
+    nito agent status   # confirm you are connected
+    ```
+  </Step>
+
+  <Step title="Add Nito to your MCP host config">
+    Drop this into your host's MCP config file:
+
+    ```json
+    {
+      "mcpServers": {
+        "nito": {
+          "command": "nito",
+          "args": ["agent", "mcp", "serve"]
+        }
+      }
+    }
+    ```
+
+    Common config paths:
+
+    | Host | Path |
+    | :-- | :-- |
+    | Claude Desktop (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+    | Claude Desktop (Windows) | `%APPDATA%\Claude\claude_desktop_config.json` |
+    | Cursor | `~/.cursor/mcp.json` |
+    | Other hosts | see the host's own MCP settings |
+  </Step>
+
+  <Step title="Restart your MCP host">
+    Your agent now has the Nito tools available. Try asking it to list Nito models or run a completion.
+  </Step>
+</Steps>
 
 ## The Tools
 
-The adapter exposes exactly these tools, each with the `nito.` prefix. The set is fixed: no undocumented tools are exposed, and a missing required tool is reported rather than hidden.
+The server exposes exactly these tools, each with the `nito.` prefix. The set is fixed: no undocumented tools are exposed, and a missing required tool is reported rather than hidden.
 
 | Tool | Input | Returns |
 | :-- | :-- | :-- |
@@ -21,28 +62,72 @@ The adapter exposes exactly these tools, each with the `nito.` prefix. The set i
 | `nito.chat_complete` | Chat request fields | The final assistant response and its metadata. Non-streaming. |
 | `nito.chat_fusion` | Prompt, two or three models, optional output and web controls | Participants, synthesis, safe attestation fields, usage, and partial status. |
 
-## What Each Tool Is For
-
 - **`nito.auth_status`** confirms who you are connected as and when the connection expires. It returns metadata only, never the credential itself.
 - **`nito.account_status`** returns your plan and usage. The `compact` projection returns just the rendered status-card fields, including the eligible-Free monthly plugin-request limit, the remaining count, and the UTC reset, and omits identifiers, scopes, and token metadata.
 - **`nito.models_list`** lists the catalog. Plain `{}` returns the full compatible list; `projection=picker` returns only `id`, `display_name`, and `privacy_tier`, plus `next_cursor`, `total`, and `catalog_revision` for paging.
+- **`nito.chat_complete`** is a single, non-streaming completion. It applies the same model policy as the rest of Nito, so premium and privacy rules are enforced here too.
+- **`nito.chat_fusion`** runs a multi-model Fusion and returns each participant plus the synthesis, along with safe attestation fields. It is available over OAuth sign-in.
 
 <Note>
 `privacy_tier` is the API's name for the model's [privacy level](/privacy/levels). These docs say level; the field kept the older word.
 </Note>
-- **`nito.chat_complete`** is a single, non-streaming completion. It applies the same model policy as the rest of Nito, so premium and privacy rules are enforced here too.
-- **`nito.chat_fusion`** runs a multi-model Fusion and returns each participant plus the synthesis, along with safe attestation fields. It is available over OAuth sign-in.
 
 ## Privacy and Limits Still Apply
 
-These tools are a different transport, not a different set of rules. The privacy level still follows the model, premium and beta model policy is enforced on `nito.chat_complete`, and rate limits are returned as normal tool errors with canonical `rate_limited` codes when you go over. Prompts, tool arguments, and completions are not persisted or logged by default.
+The MCP server is a different transport, not a different set of rules. The privacy level still follows the model, premium and beta model policy is enforced on `nito.chat_complete`, and rate limits are returned as normal tool errors with canonical `rate_limited` codes when you go over. Prompts, tool arguments, and completions are not persisted or logged by default.
 
-## Running the Local Bridge
+## Running the Server
 
-If your agent needs a local MCP endpoint, the command line tool can run one:
+Your MCP host normally launches `nito agent mcp serve` for you from the config above, but you can run it directly to test it or to pass flags:
 
 ```bash
-nito agent mcp
+# Start the MCP server over stdio
+nito agent mcp serve
+
+# Use a specific agent profile
+nito agent mcp serve --profile work
+
+# Point at a specific gateway (self-hosted or development)
+nito agent mcp serve --base-url https://nito.example.com
 ```
 
-This starts the optional local MCP bridge, which mirrors the same documented tools. For the full protocol details, scopes, and paging behavior, see the platform [MCP reference](/cli/cli-overview).
+## Options
+
+`nito agent mcp serve` accepts a couple of flags for advanced setups:
+
+| Flag | Effect |
+| :-- | :-- |
+| `--profile <name>` | Use a specific agent profile instead of the default. |
+| `--base-url <url>` | Point the bridge at a specific gateway, for self-hosted or development environments. |
+
+To pin a profile in your host config instead:
+
+```json
+{
+  "mcpServers": {
+    "nito": {
+      "command": "nito",
+      "args": ["agent", "mcp", "serve", "--profile", "work"]
+    }
+  }
+}
+```
+
+<Note>
+If your host reports the server as disconnected, check that `nito agent status` shows you signed in, and that `nito` is on the PATH your MCP host runs with. Hosts launched from the GUI sometimes have a different PATH than your shell.
+</Note>
+
+## How This Differs From the Plugin
+
+The [Claude Code and Codex plugin](/get-started/what-the-plugin-is) already connect to Nito for you, so you do not need this to use `/nito:` or `$nito:` commands. Reach for `nito agent mcp serve` when you want a **different** MCP host, or your own agent, to call the same Nito tools directly.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Nito CLI" icon="terminal" href="/cli/reference">
+    Install, the command index, and the terminal front door.
+  </Card>
+  <Card title="Choosing a Model" icon="list-check" href="/commands/choosing-a-model">
+    Which models the tools can reach, and their privacy levels.
+  </Card>
+</CardGroup>

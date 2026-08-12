@@ -1,0 +1,83 @@
+---
+title: "Account and Models"
+description: "Sign in, check your profile, browse the models available to your account, and set the default model your terminal calls use."
+---
+
+`nito agent` manages the credential the terminal uses and the default model your calls run on. Sign-in happens in your browser, and the credential is stored in your operating system keychain, never a password in the terminal.
+
+## Creating an Account
+
+If you do not have a Nito account yet, start signup from the terminal. It opens your browser to the signup page:
+
+```bash
+# Open the signup page in your browser
+nito agent signup
+
+# Print the signup URL instead of opening a browser
+nito agent signup --no-browser
+```
+
+Use `--no-browser` on a headless machine or over SSH, then open the printed URL wherever you have a browser. Once your account exists, sign in with `nito agent login` below.
+
+## Signing In
+
+```bash
+# Sign in through your browser
+nito agent login
+
+# Show the active profile and connectivity
+nito agent status
+
+# Sign out
+nito agent logout
+```
+
+`nito agent status` reports your profile, environment, authentication method, plan, and subscription state. Run it first whenever a command says you are not connected.
+
+<Note>
+Nito never asks for a password in the terminal. Approval always happens in the browser, and only a credential reference is kept locally.
+</Note>
+
+## Browsing Models
+
+List the models your account can use, with their privacy level and capabilities:
+
+```bash
+nito agent models
+```
+
+Each row shows the **logical model ID** (what you pass to `--model`), its privacy level, and what it supports. See [Choosing a Model](/commands/choosing-a-model) for how to pick one, and [Models](/models) for the full catalog.
+
+## Setting a Default Model
+
+The default applies to terminal calls that do not pass `--model` (for example a bare `nito ask`).
+
+```bash
+# Set your default model
+nito agent model openai/gpt-5.5
+
+# Show the current default
+nito agent model status
+
+# Clear it
+nito agent model reset
+```
+
+A per-call `--model` always wins over the default. The default does not change the model your harness runs, only the model your direct Nito calls use.
+
+## Options
+
+| Flag | Effect |
+| :-- | :-- |
+| `--profile <name>` | Act on a specific agent profile instead of the default. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Choosing a Model" icon="list-check" href="/commands/choosing-a-model">
+    How the saved default works with per-call overrides.
+  </Card>
+  <Card title="Nito CLI" icon="terminal" href="/cli/reference">
+    Install, the command index, and the terminal front door.
+  </Card>
+</CardGroup>
