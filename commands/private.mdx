@@ -35,12 +35,12 @@ The plugin intercepts the command before your harness runs its own inference, se
 
 | Option | What it does |
 | :-- | :-- |
-| `--model <id>` | Use a specific Nito model for this call. Without it, `private` uses your saved [default model](/commands/choosing-a-model). |
+| `--model <id>` | Use a specific model from the Nito catalog for this call. Without it, `private` uses your saved [default model](/commands/choosing-a-model). |
 | `--web-search off\|auto\|on` | Control web search for the call. Defaults on where the model supports it. |
 | `--web-fetch` | Allow URL retrieval for the call *(Claude Code)*. |
 | `--file <path>` | Attach a local file. Repeatable. |
 
-All four privacy levels are supported. On an Encrypted model the options above do not apply, because the level turns off web search, file attachments, and tools.
+Anonymous, Private, and Confidential models all work with `private`. An `:encrypted` model is refused before the call is routed, because Encrypted is [coming soon to the plugin](/privacy/levels/encrypted) rather than available today.
 
 ## Incognito Session (no prompt)
 

@@ -46,10 +46,12 @@ Pick a model and you have picked its privacy level. There are four.
   <Card title="Confidential">
     The model runs inside attested hardware. Nito checks the attestation before you see the answer, and blocks the response if the check fails.
   </Card>
-  <Card title="Encrypted">
-    Your question is encrypted on your own machine against the hardware's key, so nothing in between can read it. Web search, file uploads, and tool calls are switched off at this level.
+  <Card title="Encrypted (coming soon)">
+    Your question is encrypted on your own machine against the hardware's key, so nothing in between can read it. Web search, file uploads, and tool calls are switched off at this level. Not yet available through the plugin.
   </Card>
 </CardGroup>
+
+Three of the four are live in this release. Encrypted needs client-side support the plugin does not carry yet, so Confidential is the strongest level you can pick today. See [Encrypted](/privacy/levels/encrypted).
 
 A privacy level never silently weakens. If you ask for a stronger level than a model supports, the call is refused with a clear message rather than served at a weaker one. The full ladder is covered in [Privacy](/privacy/levels).
 
