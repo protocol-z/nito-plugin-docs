@@ -20,7 +20,9 @@ From lightest to strongest:
 | **Anonymous** | Choose an Anonymous model | The frontier rung. The provider gets your request from Nito, without your identity attached. |
 | **Private** | Choose a Private model | Everything Anonymous gives you, plus the upstream provider held to zero data retention. |
 | **Confidential** | Choose a `:confidential` model | Runs inside a sealed environment (a TEE) that produces a signed attestation you can verify. |
-| **Encrypted** | Choose an `:encrypted` model | Adds client-side encryption to the sealed environment. Web search, files, tools, and streaming are off. |
+| **Encrypted** | Coming soon to the plugin | Adds client-side encryption to the sealed environment. Web search, files, tools, and streaming are off. |
+
+Confidential is the strongest level this release can run. An `:encrypted` model is refused with a message pointing you back to the three levels above. See [Encrypted](/privacy/levels/encrypted).
 
 Two terms worth defining:
 
