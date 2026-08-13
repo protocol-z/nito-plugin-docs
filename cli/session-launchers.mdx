@@ -3,7 +3,7 @@ title: "Session Launchers"
 description: "Start an isolated, fully Nito-routed Claude Code or Codex session from the terminal, with a dedicated profile that leaves your normal setup untouched."
 ---
 
-`nito claude` and `nito codex` open a harness session whose model is **entirely a model through Nito**, from your terminal. They are the command line tool form of the in-chat [`session`](/commands/session) command: the harness runs normally, but every model turn goes to Nito instead of the harness's own provider.
+`nito claude` and `nito codex` open a harness session that runs **entirely through Nito**, from your terminal. They are the command line tool form of the in-chat [`session`](/commands/session) command: the harness runs normally, but every model turn goes to Nito instead of the harness's own provider.
 
 Each launcher runs in an **isolated profile**. Your ordinary Claude Code or Codex configuration, credentials, and history are not touched, and exiting returns you to your normal setup.
 
@@ -30,7 +30,7 @@ Anything after `--` is passed straight through to Claude Code.
 
 | Flag | Default | Effect |
 | :-- | :-- | :-- |
-| `--model <id>` | (required) | The certified Nito model that powers the session. |
+| `--model <id>` | (required) | The Nito-supported model that powers the session. |
 | `--private` | off | Start with no Claude transcript or prompt-history persistence. |
 | `--ephemeral-history` | off | Allow up-arrow history in the temporary private profile, then delete it on a clean exit. |
 | `--skip-permissions` | off | Run a private sidecar with Claude permission prompts bypassed. |
@@ -57,7 +57,7 @@ Anything after `--` is passed straight through to Codex.
 
 | Flag | Default | Effect |
 | :-- | :-- | :-- |
-| `--model <id>` | (required) | The certified Nito model that powers the session. |
+| `--model <id>` | (required) | The Nito-supported model that powers the session. |
 | `--web-search off\|auto\|on` | `on` | Codex web search: `off`, `auto` (cached), or `on` (live). |
 | `--working-directory <path>` | current | Working directory for the session. |
 | `--agent-profile <name>` | default | Nito agent credential profile to use. |
