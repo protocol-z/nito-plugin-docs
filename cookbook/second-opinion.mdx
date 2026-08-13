@@ -3,7 +3,7 @@ title: "Multi Model Answer Checker"
 description: "Cross-check Claude Code or Codex's own answer against independent models with Nito Fusion, without leaving your session, so confident-but-wrong answers surface before you act on them."
 ---
 
-**Goal.** Your harness runs one model, and a single model can be confidently wrong. This recipe cross-checks your host model's answer against two or three **independent** models with Fusion, right inside the same Claude Code or Codex session, so a contested or incorrect claim shows up instead of hiding behind one model's confidence. Nothing else lets you do this without leaving your session.
+**Goal.** Your harness runs one model, and a single model can be confidently wrong. This recipe cross-checks your harness's own answer against two or three **independent** models with Fusion, right inside the same Claude Code or Codex session, so a contested or incorrect claim shows up instead of hiding behind one model's confidence.
 
 **When to reach for it.** A design call, a security claim, a tricky algorithm, a "which library" decision, anything where being wrong is expensive. For an ordinary question you already trust, you do not need it.
 
@@ -11,7 +11,7 @@ description: "Cross-check Claude Code or Codex's own answer against independent 
 
 A single model has blind spots, and it states a wrong answer with the same fluency as a right one. You cannot tell which from the answer alone.
 
-Fusion breaks that by asking several models the same question at once and reconciling their answers. The result has two parts: each model's own take, and a **synthesis with a "where the candidates disagree" section**. That disagreement map is the point. It tells you whether a question is settled or contested, and exactly where the models split, so you can compare that against what your host model told you.
+Fusion breaks that by asking several models the same question at once and reconciling their answers. The result has two parts: each model's own take, and a **synthesis with a "where the candidates disagree" section**. That disagreement map is the point. It tells you whether a question is settled or contested, and exactly where the models split, so you can compare that against what your harness's own model told you.
 
 Because it runs through the plugin, all of this happens **inside your existing session**. You do not copy the question into another tool or lose your context; you get an independent panel in the same place you are already working.
 
@@ -20,13 +20,13 @@ Because it runs through the plugin, all of this happens **inside your existing s
 - **Nito installed and signed in** in Claude Code or Codex. See [Install on Claude Code](/get-started/install-claude-code) or [Install on Codex](/get-started/install-codex).
 - **A paid plan** (Fusion is a paid feature). The single-model check below works on Free.
 
-## Step 1: Get your host model's answer
+## Step 1: Get your harness's own answer
 
 Ask your harness as you normally would, for example:
 
 > Should this service use optimistic or pessimistic locking for its inventory counter?
 
-Your host model answers. Keep that answer in mind for the comparison.
+Your harness's own model answers. Keep that answer in mind for the comparison.
 
 ## Step 2: Cross-check with a panel
 
@@ -47,7 +47,7 @@ Send the same question to two or three independent models with Fusion. Name mode
 
 {/* PLACEHOLDER: swap in final launch model IDs when the catalog is confirmed. */}
 
-## Step 3: Read the synthesis against your host model
+## Step 3: Read the synthesis against your harness's own model
 
 Fusion returns each model's answer plus a synthesis. Abridged and representative:
 
@@ -65,11 +65,11 @@ Synthesis
    bursty, optimistic wins.
 ```
 
-Now compare against your host model:
+Now compare against your harness's own model:
 
-- **The panel agrees with your host model:** you have independent corroboration. Move on.
+- **The panel agrees with your harness's own model:** you have independent corroboration. Move on.
 - **The panel splits:** the question is genuinely contested. The disagreement map tells you on what, so you can decide deliberately instead of trusting one voice.
-- **The panel disagrees with your host model:** the strongest signal. Read why, and re-examine the host's answer before you act on it.
+- **The panel disagrees with your harness's own model:** the strongest signal. Read why, and re-examine that answer before you act on it.
 
 ## Verify a Specific Claim
 
@@ -133,7 +133,7 @@ nito fusion \
 | What you see | Why | Fix |
 | :-- | :-- | :-- |
 | "Fusion requires a paid plan" | You are on Free | Use the single-model `ask` check in "Verify a Specific Claim" |
-| The panel just echoes the host model | The models chosen are too similar | Pick models from different families (a frontier model plus an open-weight one) |
+| The panel just echoes your harness's own model | The models chosen are too similar | Pick models from different families (a frontier model plus an open-weight one) |
 | A privacy-level error | A Confidential model was mixed with a lower level | Keep Confidential participants in a Confidential-only Fusion. See [Fusion](/commands/fusion) |
 | Web search returns stale data | The search backend declined the query | Rephrase as a clearly time-sensitive question, or try again |
 
@@ -144,7 +144,7 @@ nito fusion \
     Full syntax, how to pick participants, and how privacy levels mix.
   </Card>
   <Card title="Private Code Review Pipeline" icon="shield-halved" href="/cookbook/private-code-review">
-    Multi-model review of your changes on Private-tier models.
+    Multi-model review of your changes on Private models.
   </Card>
   <Card title="Choosing a Model" icon="list-check" href="/commands/choosing-a-model">
     How to pick strong, complementary models for a panel.

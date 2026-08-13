@@ -13,7 +13,7 @@ Most users never need this. The plugin already connects to Nito for `/nito:` and
 
 <Steps>
   <Step title="Install and sign in">
-    Install the command line tool (see [Install on Claude Code](/get-started/install-claude-code)), then sign in once. Unlike servers that take an API key in the config, Nito authenticates through `nito agent login` and stores a credential in your OS keychain, so no key or token goes into your host config.
+    Install the command line tool (see [Install on Claude Code](/get-started/install-claude-code)), then sign in once. Nito authenticates through `nito agent login` and stores a credential in your OS keychain, so no key or token goes into your MCP host config.
 
     ```bash
     nito agent login
@@ -22,7 +22,7 @@ Most users never need this. The plugin already connects to Nito for `/nito:` and
   </Step>
 
   <Step title="Add Nito to your MCP host config">
-    Drop this into your host's MCP config file:
+    Drop this into your MCP host config file:
 
     ```json
     {
@@ -46,7 +46,7 @@ Most users never need this. The plugin already connects to Nito for `/nito:` and
   </Step>
 
   <Step title="Restart your MCP host">
-    Your agent now has the Nito tools available. Try asking it to list Nito models or run a completion.
+    Your agent now has the Nito tools available. Try asking it to list the Nito catalog or run a completion.
   </Step>
 </Steps>
 
@@ -100,7 +100,7 @@ nito agent mcp serve --base-url https://nito.example.com
 | `--profile <name>` | Use a specific agent profile instead of the default. |
 | `--base-url <url>` | Point the bridge at a specific gateway, for self-hosted or development environments. |
 
-To pin a profile in your host config instead:
+To pin a profile in your MCP host config instead:
 
 ```json
 {
@@ -114,7 +114,7 @@ To pin a profile in your host config instead:
 ```
 
 <Note>
-If your host reports the server as disconnected, check that `nito agent status` shows you signed in, and that `nito` is on the PATH your MCP host runs with. Hosts launched from the GUI sometimes have a different PATH than your shell.
+If your MCP host reports the server as disconnected, check that `nito agent status` shows you signed in, and that `nito` is on the PATH your MCP host runs with. Hosts launched from the GUI sometimes have a different PATH than your shell.
 </Note>
 
 ## How This Differs From the Plugin

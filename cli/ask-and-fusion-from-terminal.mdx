@@ -11,7 +11,7 @@ description: "Run a single Nito question or a multi-model Fusion directly from t
 nito ask [prompt] [flags]
 ```
 
-A single question to a single Nito model. The answer prints to standard output.
+A single question, routed through Nito to one model. The answer prints to standard output.
 
 ```bash
 # Basic question
@@ -31,7 +31,7 @@ nito ask --web-search off "What is 7 times 6?"
 
 | Flag | Default | Effect |
 | :-- | :-- | :-- |
-| `--model <id>` | your saved default | Choose the Nito model for this call. |
+| `--model <id>` | your saved default | Choose the model for this call. |
 | `--file <path>` | none | Attach a local image or document. Repeatable. |
 | `--web-search off\|auto\|on` | `on` | Hosted web search mode. |
 | `--web-fetch <on\|off>` | `on` | Allow hosted fetch of URLs you name. |
