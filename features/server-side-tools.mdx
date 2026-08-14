@@ -1,16 +1,16 @@
 ---
 title: "Server-Side Tools"
-description: "Capabilities Nito runs for the model during a call: web search, web fetch, and document parsing. You turn them on with a flag; Nito does the work."
+description: "Capabilities Nito runs for the model during a call: web search, web fetch, and document parsing."
 ---
 
-Some capabilities are not something the model does on its own; they are work Nito performs during your call and folds into the answer. You turn them on with a flag, and Nito handles the rest.
+These are work Nito performs during your call and folds into the answer. Web search and web fetch are on by default; the flags narrow them or turn them off. Document parsing happens whenever you attach a file.
 
 <CardGroup cols={2}>
   <Card title="Web Search" icon="magnifying-glass" href="/features/server-side-tools/web-search">
-    Pull fresh information from the web into an answer. Nito decides whether a search is warranted and reports what it did. Flag: `--web-search`.
+    Pull fresh information from the web into an answer. On by default. Narrow or disable it with `--web-search`.
   </Card>
   <Card title="Web Fetch" icon="link" href="/features/server-side-tools/web-fetch">
-    Read a specific URL you name in your prompt into the model's context. Flag: `--web-fetch`.
+    Read a specific URL you name in your prompt into the model's context. On by default. Disable it with `--web-fetch=off`.
   </Card>
   <Card title="Document Parsing" icon="file-lines" href="/features/server-side-tools/file-parser">
     Attach a document with `--file` and Nito extracts its text so the model can read it.
@@ -23,4 +23,4 @@ Some capabilities are not something the model does on its own; they are work Nit
 - **Web fetch** starts from a URL already in your prompt and reads that one page.
 - **Document parsing** starts from a file you attach and reads its text.
 
-All three attach to your [`ask`](/commands/ask-and-continue) command (and work inside a [`session`](/commands/session)), and all three work from the [terminal](/cli/ask-and-fusion-from-terminal) too. For attaching images rather than documents, see [Image Input](/features/multimodal/image-input).
+All three work on [`ask`](/commands/ask-and-continue), inside a [`session`](/commands/session), and from the [terminal](/cli/ask-and-fusion-from-terminal). For attaching images rather than documents, see [Image Input](/features/multimodal/image-input).
