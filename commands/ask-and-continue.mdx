@@ -1,9 +1,9 @@
 ---
 title: "Ask and Continue"
-description: "Ask one question through Nito inside your current chat, then continue that exchange, without changing the model your harness runs."
+description: "Ask any model in the Nito catalog from inside your current chat, then continue the exchange."
 ---
 
-`ask` sends one prompt to a model through Nito and returns the answer inside your current chat. `continue` follows up on that same exchange. Both make **at most one** Nito call and leave your harness model untouched.
+`ask` sends one prompt to a model through Nito and returns the answer inside your current chat. `continue` follows up on that same exchange. Both make **at most one** Nito call.
 
 <Note>
 `ask` is a normal turn in your harness chat, so **your harness model can see the ask prompt and answer**. It is a "second opinion," not a private one. When a prompt must stay out of the harness's request, use [`private`](/commands/private) instead.

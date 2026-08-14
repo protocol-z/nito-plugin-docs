@@ -112,21 +112,27 @@
         "tab": "Commands",
         "groups": [
           {
-            "group": "Core",
+            "group": "Model Access",
             "pages": [
               "commands/ask-and-continue",
-              "commands/choosing-a-model",
-              "commands/fusion"
+              "commands/choosing-a-model"
             ],
-            "icon": "bolt"
+            "icon": "shuffle"
           },
           {
-            "group": "Private and Sessions",
+            "group": "Privacy",
             "pages": [
               "commands/private",
               "commands/session"
             ],
             "icon": "user-secret"
+          },
+          {
+            "group": "Premium",
+            "pages": [
+              "commands/fusion"
+            ],
+            "icon": "layer-group"
           },
           {
             "group": "Account and Settings",

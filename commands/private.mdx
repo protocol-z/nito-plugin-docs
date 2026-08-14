@@ -71,9 +71,7 @@ The incognito session's whole point is that it writes nothing. Two options relax
 | `--skip-permissions` | Pre-approves the harness's tool prompts inside the private session. It removes interactive approvals; it is **not a sandbox**. Tool file, shell, and network effects are still fully real. |
 | `--working-directory <path>` | Run the session in a specific directory instead of the current one. |
 
-## What the Guarantee Actually Covers
-
-Be precise about what "private" means here, so you can rely on it correctly.
+## What Private Covers
 
 - **What it protects:** the prompt and the Nito answer are kept out of your **harness model's request**, so the harness provider never receives them. The result is labeled so you can confirm it ran privately.
 - **What stays in the path:** your local harness process, your operating system, the Nito gateway, and the selected model provider are still involved. Private removes the *harness model* from the exchange, not everyone.
