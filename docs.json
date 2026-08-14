@@ -26,7 +26,8 @@
               "get-started/requirements",
               "get-started/install-claude-code",
               "get-started/install-codex",
-              "get-started/updating-uninstalling"
+              "get-started/update",
+              "get-started/uninstall"
             ],
             "icon": "download"
           },
@@ -331,6 +332,10 @@
     "links": []
   },
   "redirects": [
+    {
+      "source": "/get-started/updating-uninstalling",
+      "destination": "/get-started/update"
+    },
     {
       "source": "/cli/cli-overview",
       "destination": "/cli/reference"
