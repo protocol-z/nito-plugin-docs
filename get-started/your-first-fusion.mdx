@@ -1,13 +1,13 @@
 ---
 title: "Your First Fusion"
-description: "Send one prompt to two or three models and read where they disagree."
+description: "Send one prompt to two or three models and get one synthesized answer."
 ---
 
 <Note>
 Fusion needs a **paid plan**. See [What Paid Unlocks](/plans/what-paid-unlocks).
 </Note>
 
-`fusion` sends one prompt to two or three models at once, then returns a synthesis that reconciles their answers and names where they split.
+`fusion` sends one prompt to two or three models at once, then a judge model synthesizes their answers into one.
 
 ## Run It
 
@@ -30,9 +30,9 @@ Fewer than two models or more than three is refused, and they have to be distinc
 
 ## Reading the Result
 
-The result has two parts: each model's own answer, listed separately, then a synthesis with a **"where the candidates disagree"** section.
+The result has two parts: each model's own answer, listed separately, then a synthesis that combines them. The judge resolves disagreements where it can and flags material ones where it cannot.
 
-The disagreement map is the reason to run Fusion. It tells you whether a question is settled or genuinely contested, and exactly where the split is, instead of handing you one model's opinion presented as decided.
+Reading the participants alongside the synthesis is the reason to run Fusion. Three models converging is a different signal from three models splitting, and you can only see that if you read them.
 
 ## Pick Models That Differ
 

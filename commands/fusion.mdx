@@ -1,9 +1,9 @@
 ---
 title: "Fusion"
-description: "Send one prompt to two or three models, then get a synthesized answer that reconciles them and shows where they disagree."
+description: "Send one prompt to two or three models and get back each answer plus a synthesis that combines them."
 ---
 
-`fusion` sends one prompt to **two or three** models at once, then runs a synthesis pass that reconciles their answers into one and shows you where they agreed and disagreed. It is the command to reach for on a contested decision, where a single model's confident answer would hide that the question is genuinely open.
+`fusion` sends one prompt to **two or three** models at once, then a judge model synthesizes their answers into one. It is the command to reach for on a decision where a single model's confident answer would hide that the question is genuinely open.
 
 <Note>
 Fusion requires a **paid plan**. See [What Paid Unlocks](/plans/what-paid-unlocks).
@@ -47,9 +47,9 @@ Participants must share a compatible privacy level:
 A Fusion result has two parts:
 
 1. **Each participant, listed separately**, with the model, timing, tokens, and whether web search was used.
-2. **A synthesis** that gives a single reconciled answer, and, importantly, a **"where the candidates disagree"** section that names the split and which way it leans.
+2. **A synthesis**: one answer combining their strengths. The judge resolves disagreements where it can, and flags them briefly where it cannot, when they are material to the answer.
 
-That disagreement map is the point: you see *that* a decision is contested and exactly where, instead of one model's opinion presented as settled.
+Seeing each participant's answer next to the synthesis is what tells you whether a decision was settled or contested.
 
 ## Example
 
