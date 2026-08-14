@@ -9,10 +9,10 @@ Confidential runs your call inside a **Trusted Execution Environment**: a sealed
 
 - **Sealed execution**, on backends built for it.
 - **An attestation you can check.** Nito runs a baseline verification, then returns the raw evidence so you can complete full hardware verification yourself.
-- **Streaming**, token by token, the same as any other level.
+- **Streaming**, token by token.
 - Everything [Private](/privacy/levels/private) gives you, underneath.
 
-The baseline confirms the evidence is present, parseable, correctly signed, and bound to a fresh value you supply with the request. It stops short of the hardware-level checks: sealed-hardware quotes, certificate chains, revocation lists, and trusted-computing-base policies are yours to complete, which is why the raw evidence comes back to you. Full procedure and a reference verifier: [TEE attestation](/privacy/tee-attestation).
+The baseline confirms the evidence is present and parseable, that the proof metadata and signing material are there, and that the evidence is bound to a fresh value you supply with the request. It stops short of the hardware-level checks: sealed-hardware quotes, certificate chains, revocation lists, and trusted-computing-base policies are yours to complete, which is why the raw evidence comes back to you. Full procedure and a reference verifier: [TEE attestation](/privacy/tee-attestation).
 
 ## How to Pick It
 
