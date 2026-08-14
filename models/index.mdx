@@ -1,27 +1,25 @@
 ---
 title: "Models"
-description: "One sign-in, the whole Nito catalog. How models work in the plugin, how a privacy level travels with each one, and how to pick."
+description: "One sign-in, the whole Nito catalog, with a privacy level attached to every model."
 ---
 
-One sign-in and you can call Kimi K3, GLM 5.2, DeepSeek, Qwen, GPT, Claude, Gemini, and the rest of the Nito catalog. You do not hold accounts with the providers behind them, manage their keys, or learn each one's request format. You name a model and Nito routes the call.
+One sign-in and you can call Kimi K3, GLM 5.2, DeepSeek, Qwen, GPT, Claude, Gemini, and the rest of the Nito catalog. No provider accounts, no keys, nothing to learn per provider. You name a model and Nito routes the call.
 
-## Switch Whenever You Like
+Switching costs nothing. Model names are stable, Nito maps each one to a backend that can run it, and moving between them changes nothing about how you work.
 
-The model you name is a stable public name. Nito maps it to whichever backend can actually run it, and picks a healthy one each time. Switching costs you nothing: no new account, no new key, no change to how you work.
+## The Privacy Level Comes with the Model
 
-The catalog is **discovered rather than fixed**. Nito adds models and retires them over time, so the live list you see when you browse is always the authoritative one. Think of it as a departures board rather than a printed timetable.
-
-## The Privacy Level Travels with the Model
-
-Every model carries a privacy level, and you get that level by choosing that model. A more private model gives you a more private call, and the level can never quietly weaken.
-
-This is the heart of how privacy works in the plugin. There is no account-wide switch to remember and no setting to get wrong: the same setup sends a throwaway question on a light model and a sensitive one on a Confidential model. See [The Four Levels](/privacy/levels).
+Every model carries a privacy level, and you get that level by choosing that model. There is no account-wide setting to remember and nothing to configure correctly: a throwaway prompt on a light model and a sensitive one on a Confidential model take the same command. The level can never quietly weaken. See [The Four Levels](/privacy/levels).
 
 ## Browsing and Choosing
 
-You browse and set models with commands rather than config files. Run [`models`](/commands/choosing-a-model) to see the catalog for your account, `model` to set a default you keep, and `--model` to override for a single call.
+Three commands, no config files.
 
-None of it changes your harness's own model.
+- [`models`](/commands/choosing-a-model) browses the catalog for your account
+- `model` sets a default you keep
+- `--model` overrides it for one call
+
+The catalog is live, so what you see when you browse is always current. None of it changes the model your harness runs.
 
 ## What This Section Covers
 
