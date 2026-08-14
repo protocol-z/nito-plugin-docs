@@ -1,58 +1,48 @@
 ---
 title: "Verify It Yourself"
-description: "How to check a Nito attestation yourself: confirm the baseline, then complete the hardware verification so you, not Nito, are the final verifier."
+description: "Confirm the baseline, then complete the hardware verification so you, not Nito, are the final verifier."
 ---
 
-Attestation is only worth anything if you check it. When you run a private call through Nito, you can ask for the attestation that backs it and confirm, on your own terms, that the call really ran inside a sealed environment. This page turns the [pipeline](/privacy/tee-attestation/attestation-pipeline) and the [seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline) into a procedure you can follow.
+Nito performs a **baseline** verification: it confirms the evidence is present, well-formed, carries its signing material, is bound to a fresh value you supplied, and is bound to the model that served the call.
 
-One thing up front, because it governs everything below. Nito performs a **baseline** verification: it confirms the evidence is present, well-formed, signed, bound to a fresh value you supplied, and bound to the model that served the call. Nito does **not** perform the full hardware verification for you. Validating the raw hardware evidence and the certificate chains it contains is **your responsibility** on top of the baseline. That is the whole point of the verify-yourself path: Nito hands you the raw evidence so that you, not Nito, are the final verifier.
+Nito does **not** perform the full hardware verification. Validating the raw hardware evidence and its certificate chains is yours to do on top of the baseline. That is the point of this path: the raw evidence comes back to you so that you, not Nito, are the final verifier.
 
 <Steps>
-  <Step title="Step 1: Supply a fresh value" icon="1" iconType="solid" stepNumber={1} titleSize="h2">
-    Replay protection is driven by you, so the procedure always starts with a fresh, unpredictable value that has never been used before. Generate it from a cryptographically secure source with plenty of entropy.
-
-    A fresh value per request is what makes the freshness gates of the baseline meaningful (see [the freshness binding](/privacy/tee-attestation/freshness-binding)). Never reuse one.
+  <Step title="Supply a fresh value" icon="1" iconType="solid" stepNumber={1} titleSize="h2">
+    Generate a fresh, unpredictable value from a cryptographically secure source, at least 32 bytes, and never reuse one. Replay protection is caller-driven, so this is what makes the freshness gates meaningful. See [the report-data binding](/privacy/tee-attestation/freshness-binding).
   </Step>
-  <Step title="Step 2: Fetch the attestation" icon="2" iconType="solid" stepNumber={2} titleSize="h2">
-    Request the attestation that backs a private call, passing along the fresh value from Step 1. What comes back is a signed statement plus the raw hardware evidence: the material you are about to verify.
+  <Step title="Fetch the attestation" icon="2" iconType="solid" stepNumber={2} titleSize="h2">
+    Request the attestation backing a Confidential call, passing the value from step 1. What comes back is a signed statement plus the raw hardware evidence.
   </Step>
-  <Step title="Step 3: Run the independent checks" icon="3" iconType="solid" stepNumber={3} titleSize="h2">
-    Do not take a "verified" flag at face value. Re-check, in your own code, the things you can check yourself against what came back. Each item below is something you assert for yourself:
+  <Step title="Run the independent checks" icon="3" iconType="solid" stepNumber={3} titleSize="h2">
+    Do not take a `verified` flag at face value. Re-check these in your own code:
 
     1. **The response arrived cleanly** and is the attestation you asked for.
     2. **A model is named** and the result reports the Confidential level as available.
-    3. **The echoed fresh value matches** the one you sent. If it does not, stop: the proof is not bound to your request.
+    3. **The echoed value matches** the one you sent. If it does not, stop: the proof is not bound to your request.
     4. **The raw evidence is present** and non-empty.
-    5. **The proof metadata is present:** a proof-format label, a signing algorithm, and the model public key the statement was signed with.
+    5. **The proof metadata is present:** a proof-format label, a signing algorithm, and the model public key.
     6. **The baseline verification passed.**
 
     If any check fails, treat the attestation as untrustworthy and do not proceed with the sensitive workload.
   </Step>
-  <Step title="Step 4: Complete the hardware verification" icon="4" iconType="solid" stepNumber={4} titleSize="h2">
-    Steps 1 through 3 give you a baseline-verified result. To get full assurance, verify the raw hardware evidence yourself: validate the hardware quote and any accelerator evidence it contains, walk the certificate chains up to the vendor certificates, and check them against current revocation and trust policy. Nito deliberately leaves this final layer to you (see the scope limit in the [seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline)). Completing it is what makes _you_ the final verifier rather than someone trusting Nito's word.
+  <Step title="Complete the hardware verification" icon="4" iconType="solid" stepNumber={4} titleSize="h2">
+    Steps 1 through 3 give you a baseline-verified result. For full assurance, verify the raw hardware evidence yourself: validate the hardware quote and any accelerator evidence it contains, walk the certificate chains up to the vendor certificates, and check them against current revocation and trust policy. See the scope limit on [the seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline).
   </Step>
 </Steps>
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="TEE Attestation" icon="stamp" href="/privacy/tee-attestation">
-    How Nito turns a privacy promise into something you can check.<br />
-  </Card>
-
-  <Card title="Attestation Pipeline" icon="arrows-left-right-to-line" href="/privacy/tee-attestation/attestation-pipeline">
-    The end-to-end flow that produces an attestation.<br />
-  </Card>
-
   <Card title="The Seven-Gate Baseline" icon="door-open" href="/privacy/tee-attestation/seven-gate-baseline">
-    The exact pass-or-fail checks Nito runs over attestation.
+    What the baseline covers, and what it does not.
   </Card>
 
-  <Card title="Freshness Binding" icon="connectdevelop" href="/privacy/tee-attestation/freshness-binding">
-    How your fresh value is recomputed and compared.
+  <Card title="Report-Data Binding" icon="connectdevelop" href="/privacy/tee-attestation/freshness-binding">
+    Why step 1 comes first.
   </Card>
 
   <Card title="Per-Provider Attestation" icon="plug-circle-check" href="/privacy/tee-attestation/per-provider-attestation">
-    Why attestation evidence can differ by backend.
+    Why evidence can differ by backend.
   </Card>
 </CardGroup>

@@ -1,68 +1,60 @@
 ---
 title: "The Report-Data Binding"
-description: "How the report data (signing address plus your nonce) is recomputed and compared when you attest, why anti-replay is caller-driven, and why reports are never persisted."
+description: "How the report data, the signing address plus your nonce, is recomputed and compared, and why anti-replay is caller-driven."
 ---
 
-An attestation is only meaningful if it was produced for _your_ request and not replayed from an earlier one. The mechanism that ties a report to a specific request is the **report-data binding**, and the freshness it provides is something you create by sending a fresh nonce. This page explains the binding, how Nito checks it, and exactly where the responsibility for replay protection sits.
+An attestation is only meaningful if it was produced for **your** request and not replayed from an earlier one. The **report-data binding** is what ties a report to a specific request.
 
-## The Binding: report data = signing address plus nonce
+## The Binding
 
-Inside a sealed environment, the hardware can stamp a small piece of caller-supplied data into the signed report. That field is the **report data**. Nito uses it to commit the report to two things at once: a signing identity and a nonce.
-
-The binding is, conceptually:
+Inside a sealed environment, the hardware stamps a small piece of caller-supplied data into the signed report. That field is the **report data**. It commits the report to two things at once:
 
 ```
 report_data = signing_address + nonce
 ```
 
-The sealed environment binds this value into the report it signs. Because the value includes your nonce, a report produced for one request cannot stand in for another: a different nonce produces different report data, and the signature would not match.
+Because the value includes your nonce, a report produced for one request cannot stand in for another. A different nonce produces different report data, and the signature would not match.
 
-## How the Binding Is Checked
+## How It Is Checked
 
-Two separate things happen when the binding is checked, and it is worth keeping them distinct.
+Two separate checks, worth keeping distinct:
 
-1. **The binding is recomputed.** The signing address and the nonce are concatenated in the same signing-address-plus-nonce form, and the result is compared against the report data observed in the evidence. The comparison is **case-insensitive**. If the recomputed value does not match what the report committed to, the binding check fails.
-2. **The observed nonce must equal your nonce.** Separately from recomputing the report data, the nonce observed in the evidence is checked against the nonce you supplied. This is a distinct check: one confirms the report committed to the signing address plus the nonce, the other confirms that the nonce in play is the one you actually sent.
+1. **The binding is recomputed.** The signing address and the nonce are concatenated in the same form and compared against the report data observed in the evidence. The comparison is **case-insensitive**. A mismatch fails the check.
+2. **The observed nonce must equal your nonce.** Separately from recomputing the report data, the nonce in the evidence is checked against the one you sent.
 
 Both must hold. Together they establish that the report was produced for a request carrying your nonce and committed to the expected signing address.
 
 ## Send a Fresh Nonce Every Time
 
-Here is the part a security reviewer must not miss. **Nothing stores nonces between requests.** There is no memory of nonces already seen, and a nonce is not rejected for having been used before. The freshness guarantee comes entirely from you choosing a fresh, unpredictable nonce every time you attest.
+**Nothing stores nonces between requests.** There is no memory of nonces already seen, and a nonce is not rejected for having been used before. The freshness comes entirely from you choosing a fresh, unpredictable nonce every time.
 
-The consequences:
+- **Send a fresh random nonce** and the checks confirm the report is fresh for this request. This is the supported pattern.
+- **Omit the nonce** and an **empty-binding report is permitted**. It is allowed, but you get no replay protection: an empty binding commits to nothing fresh, so an old report could satisfy it.
 
-- **Send a fresh random nonce every time** and the binding checks confirm the report is fresh for this request. This is the supported, secure pattern.
-- **Omit the nonce** and an **empty-binding report is permitted.** It is allowed, but you get no replay protection from it. An empty binding commits to nothing fresh, so an old report could satisfy it.
+Replay protection is a property of the protocol you follow, not of the attestation in the abstract. A Nito attestation is replay-resistant when you supply a fresh nonce and verify it was echoed back.
 
-So replay protection is not an unconditional property of the attestation. It is a property of the protocol you follow: do not describe a Nito attestation as replay-proof in the abstract. It is replay-proof only when you supply a fresh nonce and verify it was echoed back.
-
-A practical recommendation: generate the nonce from a cryptographically secure random source, at least 32 bytes, encoded as hex, and never reuse one. The [verify-yourself recipe](/privacy/tee-attestation/verify-yourself-recipe) does exactly this as its first step.
+Generate the nonce from a cryptographically secure random source, at least 32 bytes, hex encoded, and never reuse one. The [verify-yourself recipe](/privacy/tee-attestation/verify-yourself-recipe) does this as step one.
 
 ## Reports Are Request-Local
 
-Attestation reports are **request-local**. They are produced for the request that asked for them and are **never persisted**. Each attestation stands alone: a fresh nonce, a fresh report, a fresh binding check, with no stored history of past reports. This is consistent with Nito's metadata-only default posture described in the [privacy overview](/privacy/overview).
+Attestation reports are produced for the request that asked for them and are **never persisted**. Each one stands alone: a fresh nonce, a fresh report, a fresh binding check.
 
 ## How This Fits the Baseline
 
-The binding and the nonce match are gates 4 and 5 of the [seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline), and gate 7 extends the nonce check into the nested payload for accelerator (GPU) envelopes. The address side of the binding is governed by an additional invariant covered in [address-only model binding](/privacy/tee-attestation/address-only-model-binding).
+The binding and the nonce match are gates 4 and 5 of the [seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline), and gate 7 extends the nonce check into the nested payload for accelerator envelopes. The address side is governed by an additional invariant on [address-only model binding](/privacy/tee-attestation/address-only-model-binding).
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="TEE Attestation" icon="stamp" href="/privacy/tee-attestation">
-    How Nito turns a privacy promise into something you can check.<br /><br />
-  </Card>
-
   <Card title="The Seven-Gate Baseline" icon="door-open" href="/privacy/tee-attestation/seven-gate-baseline">
-    The exact pass-or-fail checks Nito runs over attestation evidence.<br />
+    Where these checks sit in the sequence.
   </Card>
 
   <Card title="Address-Only Model Binding" icon="address-card" href="/privacy/tee-attestation/address-only-model-binding">
-    How that address-based binding is validated in the nested model attestation.
+    How the address binding is validated.
   </Card>
 
   <Card title="Verify It Yourself" icon="memo-circle-check" href="/privacy/tee-attestation/verify-yourself-recipe">
-    A runnable recipe for fetching and checking a Nito attestation.
+    Generating and checking a nonce in practice.
   </Card>
 </CardGroup>
