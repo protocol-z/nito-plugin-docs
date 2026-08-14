@@ -7,9 +7,9 @@ Every model carries a privacy level, and the level decides how private a call to
 
 ## Privacy Follows the Model, Per Call
 
-You choose privacy per prompt, by choosing a model, because [the level follows the model](/privacy/levels). The same setup sends a throwaway prompt on a light model and a sensitive one on a Confidential model.
+You choose privacy per prompt, by choosing a model, because [the level follows the model](/privacy/levels).
 
-The reason to climb only as high as you need: stronger levels narrow the set of models available and add overhead. Match the level to the sensitivity of the call rather than maxing it out.
+The reason to climb only as high as you need: stronger levels narrow the set of models available and may add some overhead. For the most efficient use, match the level to the sensitivity of the call rather than always maxing it out.
 
 ## The Four Levels
 
@@ -19,7 +19,7 @@ From lightest to strongest:
 | :-- | :-- | :-- |
 | **Anonymous** | Choose an Anonymous model | The frontier rung. The provider gets your request from Nito, without your identity attached. |
 | **Private** | Choose a Private model | Everything Anonymous gives you, plus the upstream provider held to zero data retention. |
-| **Confidential** | Choose a `:confidential` model | Runs inside a sealed environment (a TEE) that produces a signed attestation you can verify. |
+| **Confidential** | Choose a Confidential model | Runs inside a sealed environment (a TEE) that produces a signed attestation you can verify. |
 | **Encrypted** | Coming soon to the plugin | Adds client-side encryption to the sealed environment. Web search, files, tools, and streaming are off. |
 
 Confidential is the strongest level this release can run. An `:encrypted` model is refused with a message pointing you back to the three levels above. See [Encrypted](/privacy/levels/encrypted).
