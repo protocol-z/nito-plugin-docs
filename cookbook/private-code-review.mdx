@@ -179,7 +179,7 @@ The `--json` object also carries `model` and `privacy_route`, so a report can re
 
 - **Terminal, not chat.** Running `nito` from the shell means the review never enters a Claude Code or Codex turn, so your harness provider is not in the path at all.
 - **Private level is retention-off, not secrecy.** The provider is instructed not to store your code; it still processes it to produce the review. For a stronger guarantee where the provider cannot read the input at all, the [Confidential level](/privacy/levels/confidential) runs inside attested hardware, subject to model availability.
-- **Fusion mixes levels by the strictest rule.** A Fusion of Private-tier models stays Private. Mixing in a lower level would pull the run down, so keep every reviewer at Private or stronger. See [Fusion](/commands/fusion).
+- **A Fusion runs at the least-private level among its participants.** A Fusion of Private-tier models stays Private, and mixing in an Anonymous model pulls the whole run to Anonymous. A Confidential model cannot be mixed in at all: that combination is refused rather than downgraded. Keep every reviewer at Private. See [Fusion](/commands/fusion).
 
 ## Troubleshooting
 
