@@ -36,6 +36,8 @@
             "pages": [
               "get-started/your-first-ask",
               "get-started/your-first-private-prompt",
+              "get-started/your-first-session",
+              "get-started/your-first-fusion",
               "get-started/check-your-setup"
             ],
             "icon": "flag-checkered"
