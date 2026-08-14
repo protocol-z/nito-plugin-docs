@@ -1,6 +1,6 @@
 ---
 title: "Confidential"
-description: "Sealed execution inside a Trusted Execution Environment, with a signed attestation you can verify. Supports streaming."
+description: "Sealed execution inside a Trusted Execution Environment, with a signed attestation you can verify."
 ---
 
 Confidential runs your call inside a **Trusted Execution Environment**: a sealed environment the surrounding system cannot read into, which produces a signed **attestation**. New to the idea? Start with the [TEE primer](/privacy/tee-attestation/what-a-tee-is).
@@ -9,18 +9,18 @@ Confidential runs your call inside a **Trusted Execution Environment**: a sealed
 
 - **Sealed execution**, on backends built for it.
 - **An attestation you can check.** Nito runs a baseline verification, then returns the raw evidence so you can complete full hardware verification yourself.
-- **Streaming**, token by token.
+- **Streaming.** The response appears as it is written, rather than arriving all at once when it is finished.
 - Everything [Private](/privacy/levels/private) gives you, underneath.
 
 The baseline confirms the evidence is present and parseable, that the proof metadata and signing material are there, and that the evidence is bound to a fresh value you supply with the request. It stops short of the hardware-level checks: sealed-hardware quotes, certificate chains, revocation lists, and trusted-computing-base policies are yours to complete, which is why the raw evidence comes back to you. Full procedure and a reference verifier: [TEE attestation](/privacy/tee-attestation).
 
-## How to Pick It
+## How to Pick Confidential Models
 
 Choose a model whose catalog entry ends in `:confidential`. The level travels with the model, so there is nothing else to set. A call that cannot be served at Confidential fails with a clear message rather than running at a weaker level.
 
 ## When to Use It
 
-When you need to verify that a sealed environment ran the work, and you still want streaming and the ordinary feature set.
+When you want to verify that a sealed environment ran the work, and you still want streaming and the ordinary feature set.
 
 ## Related Resources
 

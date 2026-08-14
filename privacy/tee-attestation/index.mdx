@@ -1,81 +1,41 @@
 ---
 title: "TEE Attestation"
-description: "How Nito turns a privacy promise into something you can check for yourself: the map to attestation, the baseline Nito runs, freshness, and the verify-yourself path."
+description: "How a Confidential call proves it ran sealed: what Nito checks, what it hands back, and what you verify yourself."
 ---
 
-Every other page in the privacy section makes a claim: that a Confidential call ran inside a sealed, hardware-isolated environment the surrounding system could not read into or tamper with. Attestation is what turns that claim from a promise into something you can check. This section is the security-sensitive core of the Nito docs, so it is written to be read slowly and audited line by line. If you are a security reviewer, this is your map.
+A Confidential call runs inside a sealed, hardware-isolated environment. An **attestation** is the signed statement, produced by that hardware, describing what was running inside it. Attestation is what makes the claim checkable.
 
-An **attestation** is a signed statement, produced by the hardware that ran your call, describing what was running inside the sealed environment. When you make a Confidential call (by choosing a Confidential model, see [choosing a model](/commands/choosing-a-model)), the sealed-compute environment produces one of these statements, and Nito gives you a signed attestation you can fetch and verify. You provide a fresh random value (a nonce) for the request, and you get back the raw hardware evidence plus a structured summary, along with whether that evidence passed Nito's baseline checks.
+You supply a fresh random value (a nonce) with the request. You get back the raw hardware evidence, a structured summary, and whether the evidence passed Nito's baseline checks.
 
-## The One Boundary to Understand First
+## The Boundary to Understand First
 
-Nito is a **baseline verifier**, not a full hardware-quote verifier. This distinction is load-bearing, and it is repeated on every page in this section because misreading it is the single most dangerous mistake a reader could make.
+**Nito is a baseline verifier, not a full hardware-quote verifier.**
 
-Nito checks that the evidence is present and well-formed, that the proof format and signing material are there, that the fresh value you supplied is echoed back, and that the binding between the evidence and your request holds. What Nito does **not** do is verify the underlying hardware evidence: the raw hardware quotes, certificate chains, certificate revocation lists (CRLs), or Trusted Computing Base (TCB) policies. That deeper verification is delegated to you through the verify-yourself path.
+Nito checks that the evidence is present and well-formed, that the proof format and signing material are there, that the fresh value you supplied is echoed back, and that the binding between the evidence and your request holds.
 
-So the right words for a Nito attestation result are **baseline-verified**, **attested**, and **verifiable**. We never call it "fully verified," because Nito alone does not establish full hardware trust. It gives you a fast baseline answer and hands you everything you need to do the rest yourself.
+Nito does **not** verify the underlying hardware evidence: the raw hardware quotes, certificate chains, certificate revocation lists, or Trusted Computing Base policies. Those are yours to complete, on the raw evidence Nito returns.
 
-<Steps>
-  <Step title="Generate a fresh value (you)" icon="1" iconType="solid" stepNumber={1} titleSize="h3">
-    Create a fresh, unpredictable random value (a nonce) for this request. Anti-replay is caller-driven, so a new value each time is what binds the attestation to this call.
-  </Step>
-  <Step title="Request the attestation (you)" icon="2" iconType="solid" stepNumber={2} titleSize="h3">
-    Ask Nito for the attestation for a Confidential model, passing your fresh value.
-  </Step>
-  <Step title="Resolve the model (Nito)" icon="3" iconType="solid" stepNumber={3} titleSize="h3">
-    Nito resolves the model you chose to the specific attestation-capable sealed-compute environment that runs it.
-  </Step>
-  <Step title="Fetch the hardware evidence (Nito)" icon="4" iconType="solid" stepNumber={4} titleSize="h3">
-    Nito asks the sealed-compute provider running that model for its attestation evidence.
-  </Step>
-  <Step title="Run the baseline checks (Nito)" icon="5" iconType="solid" stepNumber={5} titleSize="h3">
-    Nito verifies the evidence is present and parseable, the proof format and signing material are present, your fresh value is echoed, and the request binding holds. It does **not** verify the underlying hardware evidence.
-  </Step>
-  <Step title="Return evidence and summary (Nito)" icon="6" iconType="solid" stepNumber={6} titleSize="h3">
-    Nito returns the raw hardware evidence, a structured summary, and whether the baseline passed.
-  </Step>
-  <Step title="Verify the hardware evidence (you)" icon="7" iconType="solid" stepNumber={7} titleSize="h3">
-    On the raw evidence, you perform the full hardware verification yourself: the hardware quotes, certificate chains, CRLs, and TCB policy.
-  </Step>
-</Steps>
+So a Nito result is **baseline-verified**, **attested**, and **verifiable**. It is never "fully verified," because Nito alone does not establish full hardware trust.
 
-<Note>
-  **You** own steps 1-2 and 7; **Nito** owns 3-6. Nito's baseline confirms only that your fresh value is echoed and that the evidence is bound to your request. It does **not** verify the underlying hardware quotes, certificate chains, CRLs, or TCB. You do that in step 7, on the raw evidence Nito returns, which is why a Nito result is **baseline-verified**, never fully verified.
-</Note>
+## Anti-Replay Is Caller-Driven
 
-## What Anti-Replay Actually Rests On
+Nothing stores nonces between requests. Supply a fresh random value every time and the baseline enforces that the evidence was produced for this request. Omit it and an empty-binding report is permitted, which gives you no replay protection. Replay resistance is a property of the protocol you follow, not an unconditional guarantee. Full treatment: [the report-data binding](/privacy/tee-attestation/freshness-binding).
 
-Attestation freshness on Nito is **caller-driven**. You supply a fresh random value on each request, and Nito requires that value to appear in the provider's evidence and in the request binding. There is no server-side store of past values. If you omit the value, an empty-binding report is permitted. That means replay protection is something you create by always sending a fresh value: it is not an unconditional guarantee Nito makes on your behalf. The [freshness binding](/privacy/tee-attestation/freshness-binding) page covers this in full, and the [verify-yourself recipe](/privacy/tee-attestation/verify-yourself-recipe) makes generating a fresh value step one.
+## This Section
 
-## Understanding the TEE Attestation Section
-
-This section is deliberately split so each idea can be explored on its own.
-
-- [**What a TEE is**](/privacy/tee-attestation/what-a-tee-is): a short, plain-language primer on the hardware concept, for readers new to the term.
-- [**The attestation pipeline**](/privacy/tee-attestation/attestation-pipeline): the end-to-end flow of a Confidential attestation, from the fresh value you supply to every part of what comes back.
-- [**The seven-gate baseline**](/privacy/tee-attestation/seven-gate-baseline): the exact pass-or-fail checks Nito runs, enumerated, with the scope limit stated plainly.
-- [**The freshness binding**](/privacy/tee-attestation/freshness-binding): how your fresh value is bound into the evidence and compared, and why anti-replay is your responsibility.
-- [**Address-only model binding**](/privacy/tee-attestation/address-only-model-binding): why the binding uses the signing address only, and why an evidence entry without a model public key never counts as a binding.
-- [**Per-provider attestation**](/privacy/tee-attestation/per-provider-attestation): how the sealed-compute providers differ in how they frame the request, and what they share.
-- [**Verify it yourself**](/privacy/tee-attestation/verify-yourself-recipe): a runnable recipe for fetching and checking an attestation, plus a pointer to a reference verifier.
-
-## How to Read This Section
-
-If you only want the mental model, read the next two pages: [what a TEE is](/privacy/tee-attestation/what-a-tee-is) and the [attestation pipeline](/privacy/tee-attestation/attestation-pipeline). If you are evaluating Nito for a sensitive workload, read all of them, then run the [verify-yourself recipe](/privacy/tee-attestation/verify-yourself-recipe) against a live Confidential model and confirm the results match what these pages describe. Attestation is only worth anything if you check it, so the docs are built to make checking it the default.
+- [**What a TEE is**](/privacy/tee-attestation/what-a-tee-is): the hardware concept, in plain language.
+- [**The attestation pipeline**](/privacy/tee-attestation/attestation-pipeline): the end-to-end flow and everything that comes back.
+- [**The seven-gate baseline**](/privacy/tee-attestation/seven-gate-baseline): the exact checks Nito runs, and the scope limit.
+- [**The report-data binding**](/privacy/tee-attestation/freshness-binding): how your nonce is bound in and compared.
+- [**Address-only model binding**](/privacy/tee-attestation/address-only-model-binding): two invariants that decide what a binding proves.
+- [**Per-provider attestation**](/privacy/tee-attestation/per-provider-attestation): how evidence differs by backend.
+- [**Verify it yourself**](/privacy/tee-attestation/verify-yourself-recipe): the procedure for completing the verification.
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="Privacy Overview" icon="shield-check" href="/privacy/overview">
-    What "private" means on Nito.<br />
-  </Card>
-
-  <Card title="Privacy Levels in Depth" icon="cubes-stacked" href="/privacy/levels">
-    The privacy levels in depth, and how to select each one.
-  </Card>
-
-  <Card title="Choosing a Model" icon="gears" href="/commands/choosing-a-model">
-    How to pick a model, and how the level follows the model you choose.
+  <Card title="Confidential Level" icon="file-award" href="/privacy/levels/confidential">
+    The level attestation backs.
   </Card>
 
   <Card title="Attestation Pipeline" icon="arrows-left-right-to-line" href="/privacy/tee-attestation/attestation-pipeline">
@@ -83,6 +43,6 @@ If you only want the mental model, read the next two pages: [what a TEE is](/pri
   </Card>
 
   <Card title="Verify It Yourself" icon="memo-circle-check" href="/privacy/tee-attestation/verify-yourself-recipe">
-    A runnable recipe for fetching and checking an attestation.
+    Become the final verifier.
   </Card>
 </CardGroup>
