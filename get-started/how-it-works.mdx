@@ -1,44 +1,24 @@
 ---
 title: "How It Works"
-description: "What happens when you type a Nito command, and how it works without disrupting your existing workflow."
+description: "Use different models in your harness, incognito, without disrupting your existing workflow."
 ---
 
 Type a Nito command and one call goes to Nito. Type anything else and your session behaves exactly as it always has.
 
 ## The Pieces
 
-- **The plugin**, inside Claude Code or Codex. It gives you the Nito commands and nothing else. It does not touch the model running your session.
-- **The `nito` command line tool**, on your machine. Setup installs it for you. It handles file attachments and launches private and session work.
-- **Nito**, the service holding the catalog. It takes your call, sends it to a model that can serve it, and returns the answer at that model's privacy level.
+- **The plugin.** Enables Nito commands in Claude Code or Codex.
+- **The `nito` command line tool.** Handles file attachments and Nito sessions. You install it once; it then installs the plugin for you.
 
 ## What Happens When You Type a Command
 
-<Steps>
-  <Step title="You type a Nito command in your session">
-    For example `/nito:ask` in Claude Code, or `$nito:ask` in Codex.
-  </Step>
-  <Step title="The plugin sends that one command to Nito">
-    Nothing else in your session goes with it beyond the context scope shown on the result.
-  </Step>
-  <Step title="Nito routes it to the model you named">
-    At that model's privacy level.
-  </Step>
-  <Step title="The answer comes back into your chat">
-    Ready to use, in the session you were already in.
-  </Step>
-</Steps>
+1. You type a Nito command in your session (for example `/nito:private <prompt>` in Claude Code)
+2. The plugin routes that command through Nito to the chosen model
+3. The response returns in your session
 
-## What Happens When You Don't
+## What Happens When You Don't Call Nito
 
 Ordinary messages to Claude Code or Codex behave exactly as they always have. Same model, same tools, same settings. Nothing routes through Nito unless you run a Nito command.
-
-## You Can See What Ran
-
-A Nito answer tells you which model served it and at what privacy level.
-
-## If a Command Can't Run
-
-The plugin tells you what to fix rather than failing quietly. Finish the step it names, then run your command again yourself. It will not re-send a request you would be billed for.
 
 ## What's Next
 
