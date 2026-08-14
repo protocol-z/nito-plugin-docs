@@ -1,63 +1,37 @@
 ---
 title: "Anonymous"
-description: "The frontier rung. Your identity is detached from the request before the provider sees it."
+description: "Frontier models, with your identity detached before the provider sees the request."
 ---
 
-Anonymous is the first rung of the [privacy ladder](/privacy/levels) and the level frontier models run at. The provider gets your request from Nito, without your identity attached. Reach for it when you want a frontier model and the call does not need retention switched off upstream or a proof of where it ran.
+Anonymous is where the frontier models run. The provider receives your request from Nito and answers it, without your identity attached.
 
-## What Anonymous Is
+## What You Get
 
-Nito sits between you and the model provider. Your account and your identity stop at Nito, and the provider receives the request from Nito and answers it. The provider sees the content of the request. It does not see who sent it.
+- **Your identity stops at Nito.** The provider sees the content of the request, not who sent it.
+- **Nito keeps nothing.** Your prompt, the response, reasoning, tool payloads, and attachment contents are never persisted. That holds at every level.
 
-That is the whole guarantee, and it is the most that can be arranged for a model only its own provider can serve. A frontier model runs on its provider's own infrastructure, so there is no way to switch retention off on their side or to seal the execution in hardware. Detaching your identity is what remains available, and it is worth having.
+A frontier model runs on its provider's own infrastructure, so what that provider does with a request after answering is governed by its own terms. Retention is enforced upstream from [Private](/privacy/levels/private) up.
 
-## What Anonymous Guarantees
+## How to Pick It
 
-- **Your identity is not passed upstream.** The request reaches the provider from Nito.
-- **Nito keeps neither your prompt nor the response.** Prompts, completions, reasoning, tool payloads, and attachment contents are not persisted. Where a chat history exists, it is on your machine.
+Choose a model whose level is Anonymous. The level travels with the model, so there is nothing else to set. Browse with the `models` command, or see the [Model List](/models/all-models).
 
-What Anonymous does not carry is a commitment from the provider about what it does with the request after answering, or any attestation. If you need retention switched off upstream, use [Private](/privacy/levels/private). If you need proof of the environment that ran the call, use [Confidential](/privacy/levels/confidential).
+## When to Use It
 
-## How to Select Anonymous
-
-You select Anonymous by picking a model whose level is Anonymous. There is no privacy flag on your command: the level follows the model. Browse the catalog with the `models` command to see each model's level, then set the one you want with `model` or `--model`.
-
-Frontier models sit here. Open-weight models start at [Private](/privacy/levels/private) and climb from there, so picking an open-weight model lands you above Anonymous rather than on it. The [Model List](/models/all-models) groups every model by level.
-
-## Trade-offs
-
-- **No upstream retention promise.** The provider is not held to zero data retention at this level. That is the line between Anonymous and Private.
-- **No proof to check.** If the value of a call depends on verifying where it ran, Anonymous cannot give you that. Pick a Confidential model for an attestation.
-- **The frontier models are here.** The models you cannot get any other way sit at this level, which is the reason to use it.
-
-## When to Choose Anonymous
-
-Reach for Anonymous when you want a specific frontier model and the request is ordinary work: prototyping, public or non-confidential prompts, general coding questions, anything where detaching your identity is enough. When the content itself is sensitive, move to a model that carries a stronger level and let the level travel with it.
+When you want a specific frontier model and the work is ordinary: prototyping, general coding questions, anything non-confidential. When the content itself is sensitive, choose a model that carries a stronger level.
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="Privacy Overview" icon="shield-check" href="/privacy/overview">
-    What "private" means on Nito.<br />
+  <Card title="Privacy Levels in Depth" icon="square-list" href="/privacy/levels">
+    All four levels, and how each is chosen.
+  </Card>
+
+  <Card title="Private Level" icon="lock-a" href="/privacy/levels/private">
+    Open-weight models with retention enforced upstream.
   </Card>
 
   <Card title="Choosing a Model" icon="cubes-stacked" href="/commands/choosing-a-model">
-    Browse models and set the one you want.
-  </Card>
-
-  <Card title="Privacy Levels in Depth" icon="cubes-stacked" href="/privacy/levels">
-    The four privacy levels in depth, and how the level follows the model.
-  </Card>
-
-  <Card title="Private Level" icon="phone-circle" href="/privacy/levels/private">
-    Open-weight models with the upstream provider held to zero data retention.<br />
-  </Card>
-
-  <Card title="Confidential Level" icon="phone-circle" href="/privacy/levels/confidential">
-    Sealed execution with an attestation you can fetch and verify.
-  </Card>
-
-  <Card title="Data Retention and Visibility" icon="id-card" href="/privacy/data-retention-and-visibility">
-    What Nito retains and what it does not.<br /><br />
+    Browse and set your model, and see its level.
   </Card>
 </CardGroup>

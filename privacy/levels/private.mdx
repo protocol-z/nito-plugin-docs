@@ -1,67 +1,38 @@
 ---
 title: "Private Level"
 sidebarTitle: "Private"
-description: "Models served under an enforced zero-data-retention requirement, so the upstream provider is told not to keep your request. Chosen by picking a Private-level model."
+description: "Open-weight models with zero data retention enforced on the upstream provider."
 ---
 
-Private is the second rung of the [privacy ladder](/privacy/levels) and where open-weight models start. Nito keeps neither your prompt nor the response at any level, and Private adds one thing on top: the upstream provider is held to **zero-data-retention**, so it is told, contractually and technically, not to keep your request after serving it. Choose Private when you want assurance about the provider's own retention, but do not need the sealed, attested execution of the Confidential and Encrypted levels.
+Private is where open-weight models start. The upstream provider is held to **zero data retention**: it is instructed, contractually and technically, not to keep your request after serving it.
 
-## What Private Is
+## What You Get
 
-A Private model is one whose privacy level is Private. These models are routed through backends configured so that the upstream does not retain your data. When a request runs on a Private-level model, a zero-data-retention requirement is set on the call, and that requirement is what the upstream backend is asked to honor.
+- **Nothing retained upstream.** A model is carried at Private only if the provider serving it can meet that requirement.
+- **Nothing retained by Nito.** Your prompt, the response, reasoning, tool payloads, and attachment contents are never persisted. That holds at every level.
 
-Whether a given model lands you in Anonymous or Private depends on the model, not on anything you type. That is exactly why you check a model's level before you choose it, rather than assuming.
+## How to Pick It
 
-## Zero-Data-Retention
+Choose a model whose level is Private. The level travels with the model, so there is nothing else to set. Browse with the `models` command, or see the [Model List](/models/all-models).
 
-**Zero-data-retention (ZDR)** means the upstream provider is instructed not to keep the request after it has served it. On a Private-level model this requirement is set explicitly, and models that cannot meet it are not carried at the Private level at all. That is what Private adds over Anonymous: Nito holds no prompt or response content either way, and at Private the provider serving the call is held to the same.
+The level is a property of the model, so a call never runs at a level the model does not carry. One that cannot be served at the level you chose fails with a clear message.
 
-What ZDR does **not** give you is a hardware-backed proof. Private is an enforced requirement on the provider, not a sealed environment you can attest. If you need to verify where and how your call ran, that is [Confidential](/privacy/levels/confidential), where you can fetch and check an attestation.
+## When to Use It
 
-## What Private Protects
-
-- **No upstream retention.** The provider is told not to keep the request.
-- **Nothing kept on Nito's side.** Your prompt and the response are not persisted, responses are not stored, and chat history stays on your machine. That holds at every level.
-- **Privately routed.** The call is placed on a backend configured for the Private level.
-
-## How to Select Private
-
-There is no privacy flag for Private. Every model carries its own privacy level, and you get the level of the model you choose. Browse the catalog with the `models` command to see which models are Private, then set one with `model` (or `--model`). The level follows the model: pick a Private-level model and your calls run in Private.
-
-If a model's level is Anonymous, choosing it serves you in [Anonymous](/privacy/levels/anonymous) instead. The distinction between Anonymous and Private is a property of the model you select, not something you toggle per request.
-
-<Note>
-Browsing with the `models` command shows each model's privacy level so you can pick the one you want. See [Choosing a model](/commands/choosing-a-model) for how to browse and set your model.
-</Note>
-
-## When to Choose Private
-
-Choose Private for moderately sensitive work where the deciding factor is the provider's retention: confidential business content, customer data you do not want a provider to retain, or anything where "the upstream keeps nothing" is the assurance you need. If the call additionally needs a verifiable execution boundary, climb to [Confidential](/privacy/levels/confidential). If the model you want is only offered at Anonymous, you stay at Anonymous: a privacy level never silently upgrades or downgrades to a level the model does not support. A request that cannot be served at the chosen level fails with a clear message rather than dropping to a weaker one.
+When what the provider retains is the deciding factor: confidential business content, customer data, anything where the provider keeping nothing is the assurance you need. When you also want proof of where the call ran, that is [Confidential](/privacy/levels/confidential).
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="Privacy Overview" icon="shield-check" href="/privacy/overview">
-    What privacy means on Nito.<br />
-  </Card>
-
-  <Card title="Choosing a Model" icon="cubes-stacked" href="/commands/choosing-a-model">
-    Browse and set your model, and see its privacy level.
-  </Card>
-
   <Card title="Privacy Levels in Depth" icon="square-list" href="/privacy/levels">
-    The four privacy levels in depth, and how each one is chosen.
-  </Card>
-
-  <Card title="Anonymous Level" icon="person-circle-question" href="/privacy/levels/anonymous">
-    The lightest and the default privacy level.<br /><br />
+    All four levels, and how each is chosen.
   </Card>
 
   <Card title="Confidential Level" icon="postage-stamp" href="/privacy/levels/confidential">
-    Sealed, attested execution with an attestation you can fetch and verify.
+    Sealed execution with an attestation you can verify.
   </Card>
 
   <Card title="Data Retention and Visibility" icon="cubes" href="/privacy/data-retention-and-visibility">
-    What is kept, what is visible, and to whom, at each level.
+    What is kept, and who can see what.
   </Card>
 </CardGroup>
