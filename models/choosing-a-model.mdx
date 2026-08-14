@@ -1,64 +1,48 @@
 ---
 title: "Choosing the Right Model"
-description: "A practical guide from a task to the right model and privacy level, from Claude Code, Codex, or the command line."
+description: "Two decisions: what the model does, and how protected the call is. This page points you at both."
 ---
 
-With many models available through Nito, the useful question is not "what exists" but "what should I use for this." This page is a decision guide. It maps a common task to a kind of model and a privacy level, so you can choose quickly and refine later. To browse what is actually available, list [`models`](/models/all-models); for the syntax to set your pick, see [Choosing a model](/commands/choosing-a-model).
-
-The single most useful habit is to separate two decisions that feel like one. What the model does and how protected the call is are independent choices. Mixing them is the most common reason people end up paying for privacy they did not need, or under-protecting a call that mattered.
-
-## Start from Two Questions
-
-1. **What task is this?** This picks the kind of model.
-2. **How sensitive is this call?** This sets the privacy level, independent of the model.
-
-Answer those two and you have most of the decision. The rest is refinement.
+Two decisions, and they are independent. What the model does is one. How protected the call is, is the other. They feel like a single choice, which is the usual reason people pay for privacy they did not need or under-protect a call that mattered.
 
 ## By Task
 
-- **Conversational or generative text.** Use a chat model. Favor a capable general model for quality, or a smaller one for speed and cost. See [Model families](/models/model-families).
-- **Step-by-step problem solving.** Use a reasoning-capable model. Reasoning is a capability of the model you pick, so choose a model that supports it rather than setting a flag. See [Reasoning](/features/reasoning).
-- **Understanding images.** Use a vision-capable model and attach the image. See [Image input](/features/multimodal/image-input).
-- **Reading documents.** Attach the file. Any model can work with it. See [PDF input](/features/multimodal/pdf-input).
-- **Current information.** Turn on web search so the model can pull in facts newer than its training. See [Web search](/features/server-side-tools/web-search).
-- **Several opinions at once.** Use Fusion to ask more than one model and compare answers. See [Fusion](/commands/fusion).
+| You want to | Use | More |
+| :-- | :-- | :-- |
+| Generate or discuss text | A chat model | [Model Families](/models/model-families) |
+| Work a problem step by step | A reasoning-capable model | [Reasoning](/features/reasoning) |
+| Ask about an image | A vision-capable model, with `--file` | [Image Input](/features/multimodal/image-input) |
+| Ask about a document | Any model, with `--file` | [PDF Input](/features/multimodal/pdf-input) |
+| Pull in current information | Any model, with web search on | [Web Search](/features/server-side-tools/web-search) |
+| Compare several answers | Fusion | [Fusion](/commands/fusion) |
 
-## By Sensitivity
+Smaller models are faster and cheaper, and usually enough. Reasoning costs extra tokens and time, so save it for problems that genuinely need the steps.
 
-A privacy level describes how protected your prompt and the reply are while the model runs. The level follows the model you choose, so pick the lightest level that genuinely fits the call.
+## By Privacy Level
 
-| The call is... | Use | Why |
-| --- | :-: | --- |
-| Low-sensitivity, internal | [Anonymous](/privacy/levels/anonymous) | Where the frontier models are, with your identity detached. |
-| Sensitive, needs no provider retention | [Private](/privacy/levels/private) | The provider retains nothing about the request. |
-| Highly sensitive, needs proof | [Confidential](/privacy/levels/confidential) | Sealed execution you can verifiably attest. |
+The level rides with the model you pick, so this is the same act as choosing the model. Take the lightest level that fits the call.
 
-The privacy decision is independent of the model decision: pick the model for the task, then pick the level for the sensitivity. A request that cannot be served at the level you asked for fails rather than quietly downgrading to a weaker one. That refusal is a feature, not a glitch: you never silently lose the protection you asked for. See [Privacy levels](/privacy/levels) for the full picture.
+| Level | Take it when | What it gives you |
+| :-- | :-- | :-- |
+| [Anonymous](/privacy/levels/anonymous) | Routine work | Frontier models, with your identity detached |
+| [Private](/privacy/levels/private) | The provider should keep nothing | Zero data retention enforced upstream |
+| [Confidential](/privacy/levels/confidential) | You need proof rather than a promise | Sealed execution with an attestation you can check |
 
-## Choosing Well
+A call that cannot be served at the level you asked for fails rather than quietly dropping to a weaker one. Full ladder: [Privacy Levels](/privacy/levels).
 
-A few habits keep your choices efficient:
+## Then Set It
 
-- **Match model size to the job.** Do not default everything to the biggest model. A smaller model is faster and cheaper, and it is often enough.
-- **Use reasoning only for genuinely hard problems.** It costs more tokens and more time, so reach for a reasoning-capable model when the task truly needs step-by-step work, not for routine questions.
-- **Match the privacy level to the sensitivity.** Maxing out privacy on every call adds overhead and can route to fewer backends for no benefit. Pay the cost of strong privacy only where the request needs it.
-- **Remember your harness is untouched.** Choosing a model through Nito never changes your own harness's model. Your Claude Code or Codex harness keeps running on its usual model; the Nito-supported model applies only to the calls you send through Nito.
-
-## Worked Examples
-
-- **A support helper that must not retain user data.** Use a capable chat model at the Private level. Step up to Confidential if you need to prove the privacy property to someone else, since attestation gives you something verifiable to show.
-- **A coding helper for internal use.** A reasoning-capable model at the Anonymous level is usually enough. Raise to Private if the code itself is sensitive.
-- **A research assistant that needs fresh facts.** A chat model with web search enabled.
+`models` browses the catalog, `model` sets a default, `--model` overrides one call. Syntax is on [Choosing a Model](/commands/choosing-a-model). None of it changes the model your harness runs.
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="Choosing a Model" icon="terminal" href="/commands/choosing-a-model">
-    The command syntax for browsing and setting your model.
+  <Card title="Model List" icon="object-ungroup" href="/models/all-models">
+    The current catalog, grouped by privacy level.
   </Card>
 
-  <Card title="All Models" icon="object-ungroup" href="/models/all-models">
-    Browse the live catalog of available models.
+  <Card title="Choosing a Model" icon="terminal" href="/commands/choosing-a-model">
+    The command syntax for browsing and setting your model.
   </Card>
 
   <Card title="Pricing" icon="money-bills" href="/models/pricing">
