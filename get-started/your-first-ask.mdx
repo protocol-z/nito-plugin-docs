@@ -1,9 +1,7 @@
 ---
 title: "Your First Ask"
-description: "See what's available, ask a model through Nito inside your chat, read the result label, and set a default."
+description: "Ask a new model, run basic commands, and set a default model."
 ---
-
-`ask` is the simplest Nito command. It sends one question through Nito and returns the answer inside your current chat. Your harness keeps running its own model and makes one Nito call when you ask.
 
 <Note>
 Type Nito commands **inside a running Claude Code or Codex session**, not at your terminal prompt. Typing `$nito:ask …` at a plain shell prompt will not work; your shell tries to interpret it and reports something like `no matches found`. Start your harness first, then run the command inside it.
@@ -11,7 +9,7 @@ Type Nito commands **inside a running Claude Code or Codex session**, not at you
 
 ## See What's Available
 
-The help command is a menu rather than a model call. It shows the Nito actions you can run:
+The `help` command displays a menu of Nito commands you can run:
 
 <Tabs>
   <Tab title="Claude Code">
@@ -41,11 +39,13 @@ The help command is a menu rather than a model call. It shows the Nito actions y
   </Tab>
 </Tabs>
 
-You don't have to choose a model first. With no saved preference, `ask` uses a sensible default. The model picker is there for when you *want* to browse or switch, not something to set up before your first call.
+`ask` is the simplest Nito command: one prompt to a model in the Nito catalog, with the response back in your chat. It runs as an ordinary turn, so your harness sees and stores it the same way it stores anything else you type.
+
+You do not have to choose a model first. With no saved preference, `ask` uses a default. The model picker is there for when you want to browse or switch.
 
 ## Read the Result Label
 
-Every Nito result ends with a label telling you exactly what ran:
+Every Nito result includes a label telling you exactly what ran:
 
 ```text
 Nito · <environment> · <model> · <privacy level> · <context scope>
@@ -62,10 +62,8 @@ Nito · Hosted · z-ai/glm-5.2 · private · Prompt only
 - **privacy level**: Anonymous, Private, or Confidential.
 - **context scope**: how much of your conversation was shared. Prompt only, by default.
 
-You never have to guess whether a call was private or which model answered. The label says so.
-
 <Note>
-`ask` is an ordinary turn in your chat, so it travels upstream with the rest of your conversation. When a question has to stay out of that, use [`private`](/get-started/your-first-private-prompt) instead.
+When a prompt needs to stay out of your harness entirely, use [`private`](/get-started/your-first-private-prompt) instead.
 </Note>
 
 ## Try a Different Model
@@ -75,12 +73,12 @@ Override the model for a single call with `--model`:
 <Tabs>
   <Tab title="Claude Code">
     ```text
-    /nito:ask --model anthropic/claude-haiku-4-5 Summarize the tradeoffs of optimistic locking.
+    /nito:ask --model qwen/qwen3-coder Summarize the tradeoffs of optimistic locking.
     ```
   </Tab>
   <Tab title="Codex">
     ```text
-    $nito:ask --model anthropic/claude-haiku-4-5 Summarize the tradeoffs of optimistic locking.
+    $nito:ask --model qwen/qwen3-coder Summarize the tradeoffs of optimistic locking.
     ```
   </Tab>
 </Tabs>
