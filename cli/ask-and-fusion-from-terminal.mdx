@@ -18,7 +18,7 @@ A single question to a single Nito-supported model. The answer prints to standar
 nito ask "Summarize what a Merkle proof guarantees."
 
 # Pick a specific model
-nito ask --model openai/gpt-5.5 "Write fizzbuzz in Python."
+nito ask --model qwen/qwen3-coder "Write fizzbuzz in Python."
 
 # Attach a document and ask about it
 nito ask --file ./report.pdf "Summarize the top three risks."
@@ -66,10 +66,10 @@ One prompt, two or three models, plus a synthesis. This is the client-side form 
 
 ```bash
 # Two or three models, one reconciled answer
-nito fusion --model openai/gpt-5.5 --model z-ai/glm-5.2 "Is this contract vulnerable to reentrancy?"
+nito fusion --model qwen/qwen3-coder --model z-ai/glm-5.2 "Is this contract vulnerable to reentrancy?"
 
 # Choose which model writes the synthesis
-nito fusion --model openai/gpt-5.5 --model z-ai/glm-5.2 --judge openai/gpt-5.5 "Stateless JWTs or server sessions?"
+nito fusion --model qwen/qwen3-coder --model z-ai/glm-5.2 --judge z-ai/glm-5.2 "Stateless JWTs or server sessions?"
 ```
 
 ### Options

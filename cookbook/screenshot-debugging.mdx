@@ -11,7 +11,7 @@ description: "Attach a screenshot of an error, a broken UI, or a diagram to a vi
 
 Documents work with any model because Nito extracts their text first. **Images do not:** the model itself has to accept image input, so you must pick a vision-capable model. Nito refuses an image on a non-vision model with a clear message rather than guessing. Supported image formats are PNG, JPEG, and WebP. See [Image input](/features/multimodal/image-input).
 
-Find vision models with `nito agent models` (look for image support). `anthropic/claude-haiku-4-5` (frontier, Anonymous) and `qwen/qwen3-vl-235b-a22b-instruct` (open-weight, Private) both accept images; pick by the privacy level you want.
+Find vision models with `nito agent models` (look for image support). `qwen/qwen3-vl-235b-a22b-instruct` (open-weight, Private) and `anthropic/claude-haiku-4-5` (frontier, Anonymous) both accept images; pick by the privacy level you want.
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ From the terminal, attach the image with `--file` and name a vision model:
 
 ```bash
 # Explain an error captured as a screenshot
-nito ask --model anthropic/claude-haiku-4-5 --file ./error.png \
+nito ask --model qwen/qwen3-vl-235b-a22b-instruct --file ./error.png \
   "What is causing this error, and how do I fix it?"
 ```
 
@@ -48,12 +48,12 @@ The same works with the plugin, using an image path in your workspace:
 <Tabs>
   <Tab title="Claude Code">
     ```text
-    /nito:ask --model anthropic/claude-haiku-4-5 --file ./ui-bug.png Why is this button overlapping the header?
+    /nito:ask --model qwen/qwen3-vl-235b-a22b-instruct --file ./ui-bug.png Why is this button overlapping the header?
     ```
   </Tab>
   <Tab title="Codex">
     ```text
-    $nito:ask --model anthropic/claude-haiku-4-5 --file ./ui-bug.png Why is this button overlapping the header?
+    $nito:ask --model qwen/qwen3-vl-235b-a22b-instruct --file ./ui-bug.png Why is this button overlapping the header?
     ```
   </Tab>
 </Tabs>
@@ -87,24 +87,24 @@ done
 
 ## Variations
 
-**Keep the screenshot private.** For a screenshot of proprietary code or internal tooling, use a Private-tier vision model so the provider does not retain it:
+**Use a frontier vision model instead.** The examples above run at the Private level. If you want a frontier model on the image and the screenshot is not sensitive, `anthropic/claude-haiku-4-5` accepts images at the Anonymous level:
 
 ```bash
-nito ask --model qwen/qwen3-vl-235b-a22b-instruct --file ./internal-dashboard.png \
-  "Explain what this dashboard is showing."
+nito ask --model anthropic/claude-haiku-4-5 --file ./mockup.png \
+  "Describe this layout."
 ```
 
 **Turn a diagram into notes.** Point it at an architecture diagram or a whiteboard photo:
 
 ```bash
-nito ask --model anthropic/claude-haiku-4-5 --file ./architecture.png \
+nito ask --model qwen/qwen3-vl-235b-a22b-instruct --file ./architecture.png \
   "List the components in this diagram and how data flows between them."
 ```
 
 **Review a UI mockup.** Ask for an accessibility or UX critique:
 
 ```bash
-nito ask --model anthropic/claude-haiku-4-5 --file ./mockup.png \
+nito ask --model qwen/qwen3-vl-235b-a22b-instruct --file ./mockup.png \
   "Give three accessibility issues in this design and how to fix each."
 ```
 
