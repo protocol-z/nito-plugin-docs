@@ -1,6 +1,6 @@
 ---
 title: "Image Input"
-description: "Attach a picture with --file and let an image-capable model read it: describe a screenshot, transcribe a receipt, or read a chart from your terminal or editor."
+description: "Attach a picture with --file and let an vision-capable model read it: describe a screenshot, transcribe a receipt, or read a chart from your terminal or editor."
 ---
 
 Image input lets a model see. You attach a picture to your prompt and a model that supports vision reads it and answers. This is how you ask "what is in this screenshot," "transcribe this receipt," or "what does this chart show." This page covers how to attach an image, the model requirement, and how documents differ from images.
@@ -12,12 +12,12 @@ Attach a picture with `--file` pointing at the image, and choose a model that su
 <Tabs>
   <Tab title="Claude Code">
     ```text
-    /nito:ask --model <image-capable-model> --file chart.png What does this chart show?
+    /nito:ask --model <vision-capable-model> --file chart.png What does this chart show?
     ```
   </Tab>
   <Tab title="Codex">
     ```text
-    $nito:ask --model <image-capable-model> --file chart.png What does this chart show?
+    $nito:ask --model <vision-capable-model> --file chart.png What does this chart show?
     ```
   </Tab>
 </Tabs>
@@ -29,22 +29,22 @@ To attach more than one image, repeat `--file`:
 <Tabs>
   <Tab title="Claude Code">
     ```text
-    /nito:ask --model <image-capable-model> --file before.png --file after.png What changed between these two screenshots?
+    /nito:ask --model <vision-capable-model> --file before.png --file after.png What changed between these two screenshots?
     ```
   </Tab>
   <Tab title="Codex">
     ```text
-    $nito:ask --model <image-capable-model> --file before.png --file after.png What changed between these two screenshots?
+    $nito:ask --model <vision-capable-model> --file before.png --file after.png What changed between these two screenshots?
     ```
   </Tab>
 </Tabs>
 
-## Images Require an Image-Capable Model
+## Images Require an Vision-Capable Model
 
 Not every model can read images. Images require a vision-capable model, and Nito checks this for you. If you attach an image to a model that cannot accept images, Nito refuses with a clear message rather than guessing, for example:
 
 ```text
-model "<id>" cannot accept image attachments; choose an image-capable model or retry without the image
+model "<id>" cannot accept image attachments; choose an vision-capable model or retry without the image
 ```
 
 This is a feature: Nito will not silently send your image to the wrong model or drop it. To find a model that works, browse the catalog and pick one whose capabilities include vision:
@@ -62,7 +62,7 @@ This is a feature: Nito will not silently send your image to the wrong model or 
   </Tab>
 </Tabs>
 
-Real image-capable model IDs (for example an `anthropic/claude-...` vision model) appear in the catalog, but prefer describing what you need ("an image-capable model") and let the `models` list confirm the current options. See [Choosing a model](/commands/choosing-a-model).
+Real vision-capable model IDs (for example an `anthropic/claude-...` vision model) appear in the catalog, but prefer describing what you need ("an vision-capable model") and let the `models` list confirm the current options. See [Choosing a model](/commands/choosing-a-model).
 
 ## Images Versus Documents
 
