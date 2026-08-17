@@ -1,6 +1,6 @@
 ---
 title: "Requirements"
-description: "What you need before installing: a supported harness version, a supported platform, a Nito account, and the command line tool."
+description: "What you need before installing: a supported harness version, a supported operating system, the command line tool, and a Nito account."
 ---
 
 ## Your Harness
@@ -14,24 +14,26 @@ You need a working install of one of these.
 
 {/* PLACEHOLDER: confirm final launch minimums before public release. */}
 
-**These minimums apply to full sessions only**, meaning `/nito:session`, `nito claude`, and `nito codex`. On an older version, a session launch stops and tells you the version you need. `ask` and `private` work on the harness you already have.
-
-## Platform
+## Operating System
 
 - **macOS and Linux.** Fully supported.
 - **Windows.** Supported. One difference: if a private session crashes, its temporary profile may sit on disk until the operating system clears it, rather than being removed on exit.
+
+## The Command Line Tool
+
+Install `nito` globally with npm. It needs **Node.js 18 or newer**.
+
+```bash
+npm install -g nito-ai
+```
+
+That one tool installs the plugin for you and powers file attachments and private and session launches. Both install guides start here.
 
 ## Account
 
 A **Nito account**. {/* PLACEHOLDER: sign-up link pending. */}
 
-Free accounts get 10 asks or private questions a month. Fusion and full sessions need a paid plan. See [Free Usage](/plans/free-usage).
-
-## The Command Line Tool
-
-The `nito` tool has to be installed and on your `PATH`. It powers setup, file attachments, and private and session launches. Installing it is the first step of each install guide.
-
 <CardGroup cols={2}>
-  <Card title="Install on Claude Code" icon="download" href="/get-started/install-claude-code" />
-  <Card title="Install on Codex" icon="terminal" href="/get-started/install-codex" />
+  <Card title="Install in Claude Code" icon="download" href="/get-started/install-claude-code" />
+  <Card title="Install in Codex" icon="terminal" href="/get-started/install-codex" />
 </CardGroup>

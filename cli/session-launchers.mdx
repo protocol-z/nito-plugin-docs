@@ -3,7 +3,7 @@ title: "Session Launchers"
 description: "Start an isolated, fully Nito-routed Claude Code or Codex session from the terminal, with a dedicated profile that leaves your normal setup untouched."
 ---
 
-`nito claude` and `nito codex` open a harness session whose model is **entirely a model through Nito**, from your terminal. They are the command line tool form of the in-chat [`session`](/commands/session) command: the harness runs normally, but every model turn goes to Nito instead of the harness's own provider.
+`nito claude` and `nito codex` open a harness session that runs **entirely through Nito**, from your terminal. They are the command line tool form of the in-chat [`session`](/commands/session) command: the harness runs normally, but every model turn goes to Nito instead of the harness's own provider.
 
 Each launcher runs in an **isolated profile**. Your ordinary Claude Code or Codex configuration, credentials, and history are not touched, and exiting returns you to your normal setup.
 
@@ -15,13 +15,13 @@ Fully Nito-routed sessions require a **paid plan** with full-session access enab
 
 ```bash
 # Start a Nito-routed Claude Code session
-nito claude --model anthropic/claude-sonnet-5
+nito claude --model z-ai/glm-5.2
 
 # Private session: no transcript or prompt-history persistence
-nito claude --model anthropic/claude-sonnet-5 --private
+nito claude --model z-ai/glm-5.2 --private
 
 # Start in a project directory, passing args through to Claude Code after --
-nito claude --model anthropic/claude-sonnet-5 --working-directory ./my-project
+nito claude --model z-ai/glm-5.2 --working-directory ./my-project
 ```
 
 Anything after `--` is passed straight through to Claude Code.
@@ -30,7 +30,7 @@ Anything after `--` is passed straight through to Claude Code.
 
 | Flag | Default | Effect |
 | :-- | :-- | :-- |
-| `--model <id>` | (required) | The certified Nito model that powers the session. |
+| `--model <id>` | (required) | The Nito-supported model that powers the session. |
 | `--private` | off | Start with no Claude transcript or prompt-history persistence. |
 | `--ephemeral-history` | off | Allow up-arrow history in the temporary private profile, then delete it on a clean exit. |
 | `--skip-permissions` | off | Run a private sidecar with Claude permission prompts bypassed. |
@@ -45,10 +45,10 @@ The privacy flags mirror the in-chat Private command. Read [Private](/commands/p
 
 ```bash
 # Start a Nito-routed Codex session
-nito codex --model openai/gpt-5.5
+nito codex --model qwen/qwen3-coder
 
 # Web search off, in a specific directory
-nito codex --model openai/gpt-5.5 --web-search off --working-directory ./my-project
+nito codex --model qwen/qwen3-coder --web-search off --working-directory ./my-project
 ```
 
 Anything after `--` is passed straight through to Codex.
@@ -57,7 +57,7 @@ Anything after `--` is passed straight through to Codex.
 
 | Flag | Default | Effect |
 | :-- | :-- | :-- |
-| `--model <id>` | (required) | The certified Nito model that powers the session. |
+| `--model <id>` | (required) | The Nito-supported model that powers the session. |
 | `--web-search off\|auto\|on` | `on` | Codex web search: `off`, `auto` (cached), or `on` (live). |
 | `--working-directory <path>` | current | Working directory for the session. |
 | `--agent-profile <name>` | default | Nito agent credential profile to use. |

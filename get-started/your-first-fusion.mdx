@@ -1,0 +1,54 @@
+---
+title: "Your First Fusion"
+description: "Send one prompt to two or three models and get one synthesized answer."
+---
+
+<Note>
+Fusion needs a **paid plan**. See [What Paid Unlocks](/plans/what-paid-unlocks).
+</Note>
+
+`fusion` sends one prompt to two or three models at once, then a judge model synthesizes their answers into one.
+
+## Run It
+
+Name two or three models, then put your prompt after `--`:
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```text
+    /nito:fusion qwen/qwen3-coder z-ai/glm-5.2 -- Should a high-contention inventory counter use optimistic or pessimistic locking? Answer in 3 sentences.
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```text
+    $nito:fusion qwen/qwen3-coder z-ai/glm-5.2 -- Should a high-contention inventory counter use optimistic or pessimistic locking? Answer in 3 sentences.
+    ```
+  </Tab>
+</Tabs>
+
+Fewer than two models or more than three is refused, and they have to be distinct.
+
+## Reading the Result
+
+The result has two parts: each model's own answer, listed separately, then a synthesis that combines them. The judge resolves disagreements where it can and flags material ones where it cannot.
+
+Reading the participants alongside the synthesis is the reason to run Fusion. Three models converging is a different signal from three models splitting, and you can only see that if you read them.
+
+## Pick Models That Differ
+
+Models from one family tend to reach the same answer the same way, so a panel of near-relatives agrees with itself and tells you nothing. Name models from different families to get a real second opinion.
+
+## Privacy Levels Have to Be Compatible
+
+Anonymous and Private models can mix in one Fusion. A Confidential model has to stay in a Confidential-only Fusion, so a synthesis never quietly downgrades a Confidential participant.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Fusion (full reference)" icon="layer-group" href="/commands/fusion">
+    Every option, including judge selection and attachments.
+  </Card>
+  <Card title="Choosing a Model" icon="list-check" href="/commands/choosing-a-model">
+    How to pick strong, complementary models for a panel.
+  </Card>
+</CardGroup>

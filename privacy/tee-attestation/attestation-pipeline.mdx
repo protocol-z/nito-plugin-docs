@@ -1,75 +1,62 @@
 ---
 title: "The Attestation Pipeline"
-description: "The end-to-end flow of a Confidential attestation, from the fresh value you supply to everything that comes back, with the baseline scope stated plainly."
+description: "The end-to-end flow of a Confidential attestation, from the nonce you supply to everything that comes back."
 ---
 
-When you fetch an attestation for a Confidential call, a fixed sequence runs. This is that sequence, end to end. It is the connective tissue for the rest of this section: the [seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline), [the freshness binding](/privacy/tee-attestation/freshness-binding), and [per-provider behavior](/privacy/tee-attestation/per-provider-attestation) all describe steps that happen inside this one flow.
+Fetching an attestation runs a fixed sequence. The [seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline), [the report-data binding](/privacy/tee-attestation/freshness-binding), and [per-provider behavior](/privacy/tee-attestation/per-provider-attestation) all describe steps inside this flow.
 
 ## What You Provide
 
-To fetch an attestation you identify the Confidential model you want to attest and, importantly, supply a fresh random value (a nonce) for the request. A few optional inputs let you assert what you expect the evidence to contain, so the check fails loudly if it does not match:
-
-| **Input** | **Required** | **Purpose** |
+| Input | Required | Purpose |
 | --- | --- | --- |
 | The Confidential model | Yes | The model to attest. It must resolve to an attestation-capable sealed-compute environment. |
-| A fresh value (nonce) | No | A fresh random value you generate. Binds the report to this request. Omitting it permits an empty binding. |
+| A fresh value (nonce) | No | Binds the report to this request. Omitting it permits an empty binding. |
 | Expected signing address | No | The signing address you expect the request binding to commit to. |
-| Expected signing algorithm | No | The signing algorithm you expect. If given, it must match what the evidence declares. |
+| Expected signing algorithm | No | If given, it must match what the evidence declares. |
 
-Although the fresh value is optional, supplying a new random value on every request is what gives you replay protection. Anti-replay is caller-driven and there is no server-side store of past values, so an omitted value is permitted but produces an empty-binding report. See [the freshness binding](/privacy/tee-attestation/freshness-binding).
+The nonce is optional, but supplying a new random value every request is what gives you replay protection. Anti-replay is caller-driven and no past values are stored, so an omitted nonce is permitted and produces an empty-binding report. See [the report-data binding](/privacy/tee-attestation/freshness-binding).
 
-## What Nito Does with the Request
+## What Nito Does
 
-The flow is three stages.
-
-1. **Resolve the model.** Nito takes the Confidential model you chose and resolves it to a concrete, attestation-capable sealed-compute environment that actually supports attestation. If the model does not support attestation, there is nothing to attest.
-2. **Fetch the hardware evidence.** Nito asks the resolved sealed-compute provider for its raw attestation evidence. How each provider frames that request differs, which is covered in [per-provider attestation](/privacy/tee-attestation/per-provider-attestation).
-3. **Run the baseline verifier.** Nito runs its baseline checks over the evidence: the [seven-gate baseline](/privacy/tee-attestation/seven-gate-baseline). The outcome of those checks sets whether the result is reported as baseline-verified.
+1. **Resolve the model** to a concrete, attestation-capable sealed-compute environment. A model that does not support attestation has nothing to attest.
+2. **Fetch the hardware evidence** from that provider. How each one frames the request differs: see [per-provider attestation](/privacy/tee-attestation/per-provider-attestation).
+3. **Run the baseline verifier** over the evidence. Those checks set whether the result is reported as baseline-verified.
 
 ## What Comes Back
 
-A successful attestation gives you a structured summary alongside the raw evidence. In prose, the summary tells you:
+A structured summary alongside the raw evidence:
 
-- The Confidential model you asked to attest, and the specific sealed-compute environment it resolved to.
-- The privacy level recorded for that model.
-- Whether attestation is available for it.
-- The subject the provider was asked about, when the provider frames its request that way (see [per-provider attestation](/privacy/tee-attestation/per-provider-attestation)).
-- **Whether the baseline passed**: the result of the seven-gate checks.
-- The fresh value observed in the evidence, which you compare against the value you sent.
+- The model you asked to attest, and the sealed-compute environment it resolved to.
+- The privacy level recorded for that model, and whether attestation is available for it.
+- The subject the provider was asked about, where the provider frames its request that way.
+- **Whether the baseline passed.**
+- The nonce observed in the evidence, to compare against the one you sent.
 - The proof format and signing algorithm the evidence declares.
 - The signing address committed to in the request binding, and the model public key.
-- **The raw hardware evidence in full**, for your own independent verification.
+- **The raw hardware evidence in full**, for your own verification.
 
 <Note>
-  The summary reports the model public key once. Some tooling surfaces it under more than one name (for example a "signing key" alias), but it is a single value, not two independent keys. Do not treat the presence of two labels as evidence of a second key.
+  The summary reports the model public key once. Some tooling surfaces it under a second name such as "signing key," but it is one value, not two independent keys.
 </Note>
 
-Attestation results are request-local and are not cached. Each request produces a fresh report bound to the fresh value you sent, so an old report cannot be replayed as a new one.
+Attestation results are request-local and are not cached. Each request produces a fresh report bound to the nonce you sent, so an old report cannot be replayed as a new one.
 
 ## The Scope Limit
 
-This pipeline produces a **baseline-verified** result, not a fully verified one. A passing baseline means the evidence passed Nito's baseline checks. It does **not** mean Nito validated the underlying hardware quotes, the certificate chains, the CRLs, or the TCB policy. Those checks are deliberately out of scope for Nito and are your responsibility on the client side. The raw evidence is returned in full precisely so you can run them, which is the point of the split: it lets you be the final verifier instead of trusting Nito. See [verify it yourself](/privacy/tee-attestation/verify-yourself-recipe).
+A passing baseline means the evidence passed Nito's baseline checks. It does **not** mean Nito validated the underlying hardware quotes, the certificate chains, the revocation lists, or the Trusted Computing Base policy. Those are deliberately out of scope and are yours to run on the raw evidence, which is returned in full for exactly that reason. See [verify it yourself](/privacy/tee-attestation/verify-yourself-recipe).
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="TEE Attestation" icon="stamp" href="/privacy/tee-attestation">
-    How Nito turns a privacy promise into something you can check.<br />
+  <Card title="The Seven-Gate Baseline" icon="door-open" href="/privacy/tee-attestation/seven-gate-baseline">
+    The exact checks Nito runs over the evidence.
   </Card>
 
-  <Card title="The Seven-Gate Baseline" icon="7" href="/privacy/tee-attestation/seven-gate-baseline">
-    The exact pass-or-fail checks Nito runs over an attestation.
-  </Card>
-
-  <Card title="Freshness Binding" icon="connectdevelop" href="/privacy/tee-attestation/freshness-binding">
-    How your fresh value is bound into the evidence and compared.
+  <Card title="Report-Data Binding" icon="connectdevelop" href="/privacy/tee-attestation/freshness-binding">
+    How your nonce is bound in and compared.
   </Card>
 
   <Card title="Per-Provider Attestation" icon="plug-circle-check" href="/privacy/tee-attestation/per-provider-attestation">
-    How attestation differs across the sealed-compute providers.
-  </Card>
-
-  <Card title="Verify It Yourself" icon="memo-circle-check" href="/privacy/tee-attestation/verify-yourself-recipe">
-    A runnable recipe for fetching and checking an attestation.
+    How evidence differs across backends.
   </Card>
 </CardGroup>

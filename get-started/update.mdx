@@ -1,0 +1,32 @@
+---
+title: "Update"
+description: "Update the command line tool and the plugin together with one command."
+---
+
+The command line tool and the plugin are always **version-matched**. Setup installs the plugin from the tool itself, so the two never drift apart. Updating one updates the other.
+
+```bash
+# Upgrade Nito and refresh your harness integrations
+nito update
+
+# Refresh only the integrations, leaving the binary as is
+nito update --skip-binary
+```
+
+`nito update` upgrades the `nito` binary through the package manager you installed it with, then re-syncs the plugin so the two stay version-matched. If you prefer, you can upgrade the binary directly and let the next command re-sync the plugin:
+
+```bash
+# Upgrade the binary directly with npm
+npm install -g nito-ai@latest
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Doctor and Update" icon="heart-pulse" href="/cli/doctor-and-update">
+    Health checks and the full update and repair flow.
+  </Card>
+  <Card title="Uninstall" icon="trash" href="/get-started/uninstall">
+    Remove the plugin, sign out, and remove the tool.
+  </Card>
+</CardGroup>

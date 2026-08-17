@@ -1,78 +1,39 @@
 ---
 title: "Confidential"
-description: "Sealed execution inside a Trusted Execution Environment, with an attestation you can fetch and verify independently. Supports streaming. Chosen by picking a Confidential-level model."
+description: "Sealed execution inside a Trusted Execution Environment, with a signed attestation you can verify."
 ---
 
-Confidential is the third rung of the [privacy ladder](/privacy/levels) and the first one backed by hardware you can check. It keeps the guarantees of the levels below it and adds the one thing none of them can: your call runs inside a sealed environment the surrounding system cannot read into, and you can obtain a signed statement that proves it did.
+Confidential runs your call inside a **Trusted Execution Environment**: a sealed environment the surrounding system cannot read into, which produces a signed **attestation**. New to the idea? Start with the [TEE primer](/privacy/tee-attestation/what-a-tee-is).
 
-## Runs inside a TEE
+## What You Get
 
-Confidential runs your call inside a **Trusted Execution Environment (TEE)**: a sealed environment the surrounding system cannot read into, which produces a signed **attestation** you can verify. New to the concept? Start with the [TEE primer](/privacy/tee-attestation/what-a-tee-is).
+- **Sealed execution**, on backends built for it.
+- **An attestation you can check.** Nito runs a baseline verification, then returns the raw evidence so you can complete full hardware verification yourself.
+- **Streaming.** The response appears as it is written, rather than arriving all at once when it is finished.
+- Everything [Private](/privacy/levels/private) gives you, underneath.
 
-That attestation is what separates Confidential from [Private](/privacy/levels/private). Private holds the provider to zero-data-retention, but you take that on the provider's word (a promise). Confidential gives you an artifact you can independently check (a proof). What Confidential provides is attested and verifiable, and Nito's own verification is a baseline rather than full hardware verification (see below).
+The baseline confirms the evidence is present and parseable, that the proof metadata and signing material are there, and that the evidence is bound to a fresh value you supply with the request. It stops short of the hardware-level checks: sealed-hardware quotes, certificate chains, revocation lists, and trusted-computing-base policies are yours to complete, which is why the raw evidence comes back to you. Full procedure and a reference verifier: [TEE attestation](/privacy/tee-attestation).
 
-## What Confidential Requires
+## How to Pick Confidential Models
 
-Confidential runs on specific sealed-compute backends only, so not every model can run in a TEE. A model supports it when the catalog marks it as offering attested, sealed execution at the Confidential level. Browse the catalog with the `models` command to see which models carry the Confidential level before you rely on it.
+Choose a model whose catalog entry ends in `:confidential`. The level travels with the model, so there is nothing else to set. A call that cannot be served at Confidential fails with a clear message rather than running at a weaker level.
 
-If a model does not carry the Confidential level, choosing it cannot get you sealed execution: the level follows the model, and a request that cannot be served at Confidential fails with a clear message rather than being served at a weaker level.
+## When to Use It
 
-## How to Select Confidential
-
-There is no privacy flag for Confidential. A model that offers it has its own catalog entry, whose name ends in `:confidential`, and you select that entry the way you select any model. Every model carries its own privacy level, and you get the level of the model you choose. Browse with the `models` command to find models that carry the Confidential level, then set one with `model` (or `--model`). The level follows the model: pick a Confidential-level model and your calls run sealed and attested.
-
-<Note>
-Browsing with the `models` command shows each model's privacy level so you can pick a Confidential one. See [Choosing a model](/commands/choosing-a-model) for how to browse and set your model.
-</Note>
-
-If the model you choose does not offer Confidential, the call fails rather than quietly downgrading to a weaker level.
-
-## Streaming Works at Confidential
-
-Confidential is the top of the ladder in this release, since [Encrypted](/privacy/levels/encrypted) is coming soon rather than available. It is also the strongest level that **streams**. You can attest a call and still receive tokens incrementally as they are produced, which a chat interface needs to show output as it arrives.
-
-## Fetching and Verifying the Attestation
-
-The attestation is what makes Confidential verifiable. Nito resolves your model to a sealed, attestation-capable backend, obtains its attestation, and runs a **baseline verification** before handing it back. The baseline checks that the provider evidence is present and parseable, that the proof format and signing material are present, that a fresh value you supply matches the one observed from the provider, and that the binding between them holds. It then returns the result, including the raw evidence, so you can perform **full client-side verification yourself**.
-
-This split matters and is load-bearing: the baseline does **not** perform the full hardware-level checks (the low-level sealed-hardware quotes, accelerator evidence, certificate chains, revocation lists, or trusted-computing-base policies). Those are yours to complete, which is exactly why the raw evidence is handed back to you. Treat the baseline result as a first pass and do the hardware-level verification on your side for maximum assurance. Freshness is caller-driven: supply a fresh random value on each request so the attestation is bound to your call. The full procedure and a reference verifier are covered in [TEE attestation](/privacy/tee-attestation) and its [verify-yourself recipe](/privacy/tee-attestation/verify-yourself-recipe).
-
-Use "attested" and "verifiable" for what Confidential gives you: Nito hands you the raw evidence so you can independently confirm the seal, but you complete that verification yourself.
-
-## Trade-offs
-
-- **Fewer backends.** Sealed execution runs on specific backends only, so Confidential reaches fewer models than Anonymous or Private, which can affect latency and availability.
-- **A proof you must use.** The attestation is only worth as much as the verification you do with it. Nito gives you a baseline and the raw evidence; full assurance comes from verifying the evidence yourself.
-- **Streaming kept.** Confidential is the strongest level that still streams. Encrypting your data to the sealed environment on top of this is [Encrypted](/privacy/levels/encrypted), which is non-streaming and coming soon.
-
-## When to Choose Confidential
-
-Choose Confidential for sensitive calls where you need to verify that a sealed environment ran the work, and where you still want streaming and the normal feature set. It is the sweet spot for high-sensitivity interactive use: attested execution without giving up token-by-token output.
+When you want to verify that a sealed environment ran the work, and you still want streaming and the ordinary feature set.
 
 ## Related Resources
 
 <CardGroup cols={3}>
-  <Card title="Privacy Levels in Depth" icon="square-list" href="/privacy/levels">
-    The four privacy levels in depth, and how each one is chosen.
-  </Card>
-
-  <Card title="Private Level" icon="lock-a" href="/privacy/levels/private">
-    Models served under an enforced zero-data-retention requirement.
-  </Card>
-
-  <Card title="Encrypted Level (coming soon)" icon="binary-lock" href="/privacy/levels/encrypted">
-    The top level: client-side encryption to the sealed environment.
-  </Card>
-
   <Card title="TEE Attestation" icon="stamp" href="/privacy/tee-attestation">
-    How Nito turns a privacy promise into something you can check.
+    How attestation works, end to end.
   </Card>
 
   <Card title="Verify It Yourself" icon="cubes-stacked" href="/privacy/tee-attestation/verify-yourself-recipe">
-    A recipe for completing full hardware verification on your side.
+    A recipe for completing hardware verification on your side.
   </Card>
 
-  <Card title="Choosing a Model" icon="signal-stream" href="/commands/choosing-a-model">
-    Browse and set your model, and see its privacy level.<br />
+  <Card title="Encrypted Level (coming soon)" icon="binary-lock" href="/privacy/levels/encrypted">
+    Client-side encryption to the sealed environment.
   </Card>
 </CardGroup>

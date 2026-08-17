@@ -13,7 +13,7 @@ Most users never need this. The plugin already connects to Nito for `/nito:` and
 
 <Steps>
   <Step title="Install and sign in">
-    Install the command line tool (see [Install on Claude Code](/get-started/install-claude-code)), then sign in once. Unlike servers that take an API key in the config, Nito authenticates through `nito agent login` and stores a credential in your OS keychain, so no key or token goes into your host config.
+    Install the command line tool (see [Install in Claude Code](/get-started/install-claude-code)), then sign in once. Nito authenticates through `nito agent login` and stores a credential in your OS keychain, so no key or token goes into your host config.
 
     ```bash
     nito agent login
@@ -46,7 +46,7 @@ Most users never need this. The plugin already connects to Nito for `/nito:` and
   </Step>
 
   <Step title="Restart your MCP host">
-    Your agent now has the Nito tools available. Try asking it to list Nito models or run a completion.
+    Your agent now has the Nito tools available. Try asking it to list Nito-supported models or run a completion.
   </Step>
 </Steps>
 
@@ -74,7 +74,7 @@ The server exposes exactly these tools, each with the `nito.` prefix. The set is
 
 ## Privacy and Limits Still Apply
 
-The MCP server is a different transport, not a different set of rules. The privacy level still follows the model, premium and beta model policy is enforced on `nito.chat_complete`, and rate limits are returned as normal tool errors with canonical `rate_limited` codes when you go over. Prompts, tool arguments, and completions are not persisted or logged by default.
+The MCP server is a different transport, not a different set of rules. The privacy level still follows the model, premium and beta model policy is enforced on `nito.chat_complete`, and rate limits are returned as normal tool errors with canonical `rate_limited` codes when you go over. Prompts, tool arguments, and completions are never persisted or logged server-side; any conversation history lives on your machine.
 
 ## Running the Server
 
@@ -87,8 +87,6 @@ nito agent mcp serve
 # Use a specific agent profile
 nito agent mcp serve --profile work
 
-# Point at a specific gateway (self-hosted or development)
-nito agent mcp serve --base-url https://nito.example.com
 ```
 
 ## Options
@@ -98,7 +96,6 @@ nito agent mcp serve --base-url https://nito.example.com
 | Flag | Effect |
 | :-- | :-- |
 | `--profile <name>` | Use a specific agent profile instead of the default. |
-| `--base-url <url>` | Point the bridge at a specific gateway, for self-hosted or development environments. |
 
 To pin a profile in your host config instead:
 

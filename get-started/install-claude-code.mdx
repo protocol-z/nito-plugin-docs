@@ -1,28 +1,21 @@
 ---
-title: "Install on Claude Code"
-description: "Install the command line tool, run setup, approve access, and run your first ask in Claude Code."
+title: "Install in Claude Code"
+description: "Install the plugin, create a Nito account, and get started."
 ---
-
-This page takes you from nothing to a working `/nito:ask` in Claude Code. You do **not** need Git, a repository checkout, or any environment variables. The setup command handles all of it.
 
 ## Before You Start
 
 - **Claude Code** installed and working. See [Requirements](/get-started/requirements) for the minimum version.
-- A **Nito account**. {/* PLACEHOLDER: link to sign-up once the URL is final. */}
+- A **Nito account**. If you do not have one, `nito agent signup` opens the signup page once you finish step 1.
 
 ## Install
 
 <Steps>
   <Step title="Install the nito command line tool">
-    It powers setup, file attachments, and private and session launches. Install it globally with npm (requires Node.js 18 or newer):
+    Install it globally with npm (requires Node.js 18 or newer):
 
     ```bash
     npm install -g nito-ai
-    ```
-
-    Check it is on your PATH:
-    ```bash
-    nito --version
     ```
   </Step>
 
@@ -33,44 +26,31 @@ This page takes you from nothing to a working `/nito:ask` in Claude Code. You do
     nito setup claude
     ```
 
-    This installs the Claude Code plugin and keeps it version-matched to your command line tool. There is no repository to clone.
+    It keeps the plugin version-matched to your command line tool. There is no repository to clone.
   </Step>
 
   <Step title="Approve access">
-    Setup authorizes **two credentials** and tells you which is which as it goes:
+    Setup opens your browser. Sign in and approve.
 
-    - the **local credential**, which powers Private, Session, and file attachments
-    - the **hosted connection**, which powers Ask, Fusion, Models, and Status
+    You may be asked twice, once for the terminal and once for the connection that powers in-chat commands. Anything you approved before is skipped.
 
-    For each one that needs it, setup **opens your browser** to a Nito approval page and waits. Sign in and approve. If the browser does not open, setup prints a URL you can visit, and you can paste the redirect back into the terminal.
-
-    A credential you have already approved is **skipped**, so if you have signed in before you may only see one prompt.
-
-    <Note>There is no separate step to run inside Claude Code. Setup finishes the hosted authorization for you.</Note>
-  </Step>
-
-  <Step title="Run your first ask">
-    Open Claude Code and run:
-
-    ```text
-    /nito:ask What is the capital of France?
-    ```
-
-    You should get an answer telling you which model served it and at what privacy level. That is the plugin working.
+    If the browser does not open, setup prints a URL you can visit instead.
   </Step>
 </Steps>
+
+That is the whole install. The plugin is ready in Claude Code and there is nothing further to run inside it. Go straight to [your first ask](/get-started/your-first-ask).
 
 ## What Setup Just Did
 
 - **Installed the plugin** and pinned it to the same version as your command line tool, so the two cannot drift apart.
-- **Approved two credentials** in sequence, the local one and the hosted connection. They are separate on purpose, and the plugin always tells you which one a command needs.
-- **Remembered your account**, so later private and session launches use it without anything to reconfigure.
+- **Approved access** for the terminal and for in-chat commands.
+- **Logged you in**, so later private and session launches use your account without anything to reconfigure.
 
 ## Next
 
 <CardGroup cols={2}>
   <Card title="Your First Private Prompt" icon="user-secret" href="/get-started/your-first-private-prompt">
-    Run a question your harness never sends upstream.
+    Run a prompt your harness never sends upstream.
   </Card>
   <Card title="Check Your Setup" icon="stethoscope" href="/get-started/check-your-setup">
     Confirm everything is healthy with `status` and `doctor`.

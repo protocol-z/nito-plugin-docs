@@ -3,7 +3,7 @@ title: "Multi Model Answer Checker"
 description: "Cross-check Claude Code or Codex's own answer against independent models with Nito Fusion, without leaving your session, so confident-but-wrong answers surface before you act on them."
 ---
 
-**Goal.** Your harness runs one model, and a single model can be confidently wrong. This recipe cross-checks your host model's answer against two or three **independent** models with Fusion, right inside the same Claude Code or Codex session, so a contested or incorrect claim shows up instead of hiding behind one model's confidence. Nothing else lets you do this without leaving your session.
+**Goal.** Your harness runs one model, and a single model can be confidently wrong. This recipe cross-checks your host model's answer against two or three **independent** models with Fusion, right inside the same Claude Code or Codex session, so a contested or incorrect claim shows up instead of hiding behind one model's confidence.
 
 **When to reach for it.** A design call, a security claim, a tricky algorithm, a "which library" decision, anything where being wrong is expensive. For an ordinary question you already trust, you do not need it.
 
@@ -11,13 +11,13 @@ description: "Cross-check Claude Code or Codex's own answer against independent 
 
 A single model has blind spots, and it states a wrong answer with the same fluency as a right one. You cannot tell which from the answer alone.
 
-Fusion breaks that by asking several models the same question at once and reconciling their answers. The result has two parts: each model's own take, and a **synthesis with a "where the candidates disagree" section**. That disagreement map is the point. It tells you whether a question is settled or contested, and exactly where the models split, so you can compare that against what your host model told you.
+Fusion asks several models the same question at once and synthesizes their answers. The result has two parts: each model's own take, and a synthesis combining them, which flags material disagreements it cannot resolve. Reading the participants next to each other is what tells you whether the question is settled or contested, so you can compare that against what your harness's own model told you.
 
 Because it runs through the plugin, all of this happens **inside your existing session**. You do not copy the question into another tool or lose your context; you get an independent panel in the same place you are already working.
 
 ## Prerequisites
 
-- **Nito installed and signed in** in Claude Code or Codex. See [Install on Claude Code](/get-started/install-claude-code) or [Install on Codex](/get-started/install-codex).
+- **Nito installed and signed in** in Claude Code or Codex. See [Install in Claude Code](/get-started/install-claude-code) or [Install in Codex](/get-started/install-codex).
 - **A paid plan** (Fusion is a paid feature). The single-model check below works on Free.
 
 ## Step 1: Get your host model's answer
@@ -68,7 +68,7 @@ Synthesis
 Now compare against your host model:
 
 - **The panel agrees with your host model:** you have independent corroboration. Move on.
-- **The panel splits:** the question is genuinely contested. The disagreement map tells you on what, so you can decide deliberately instead of trusting one voice.
+- **The panel splits:** the question is genuinely contested. Read the participants to see on what, so you can decide deliberately instead of trusting one voice.
 - **The panel disagrees with your host model:** the strongest signal. Read why, and re-examine the host's answer before you act on it.
 
 ## Verify a Specific Claim
@@ -78,12 +78,12 @@ To check one concrete statement rather than re-ask the whole question, paste the
 <Tabs>
   <Tab title="Claude Code">
     ```text
-    /nito:ask --model openai/gpt-5.5 Is this correct? "A UUID v4 is guaranteed unique across systems." Answer yes or no and explain in one sentence.
+    /nito:ask --model z-ai/glm-5.2 Is this correct? "A UUID v4 is guaranteed unique across systems." Answer yes or no and explain in one sentence.
     ```
   </Tab>
   <Tab title="Codex">
     ```text
-    $nito:ask --model openai/gpt-5.5 Is this correct? "A UUID v4 is guaranteed unique across systems." Answer yes or no and explain in one sentence.
+    $nito:ask --model z-ai/glm-5.2 Is this correct? "A UUID v4 is guaranteed unique across systems." Answer yes or no and explain in one sentence.
     ```
   </Tab>
 </Tabs>

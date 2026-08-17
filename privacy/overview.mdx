@@ -1,65 +1,39 @@
 ---
 title: "How Privacy Works"
-description: "Two choices decide how private a call is: what leaves your harness, and the privacy level of the model that answers."
+description: "Two things decide how private a call is: what your harness provider sees, and what the model provider keeps."
 ---
 
-Privacy on the plugin is not one setting you turn on for your account. It comes from two choices you make, per prompt.
+Two things decide how private a call is: what your harness provider sees, and what the model provider keeps.
 
-1. **What leaves your harness.** Claude Code and Codex normally send your prompts to their own model provider. Nito commands go to Nito instead, and [`private`](/commands/private) keeps a turn away from your harness's provider entirely.
-2. **The privacy level of the model that answers.** Every model in the catalog carries a privacy level. You get the level of the model you choose.
+## What Your Harness Provider Sees
 
-## Who Can See What
+Claude Code and Codex normally send your conversation to their own model provider. The command you use decides whether a Nito exchange goes with it.
 
-The thing worth understanding is who sees a given question.
+- [`ask`](/commands/ask-and-continue) runs inside your harness conversation, so the prompt and the response travel upstream with the rest of it.
+- [`private`](/commands/private) does not. The prompt and the response stay out of what your harness sends.
+- [`session`](/commands/session) runs an entire session away from your harness's provider, keeping history on your machine so you can return to it. `private` with no prompt does the same and keeps nothing.
 
-- **Your harness**, Claude Code or Codex, is the program on your machine. In normal use it sends your prompts to its own model provider, which is Anthropic or OpenAI.
-- **Nito** is the service the plugin calls.
+[What Each Command Protects](/privacy/what-each-command-protects) goes command by command.
 
-When you run a Nito command, that question goes to Nito. Whether your harness also sees it depends on the command.
+## What the Model Provider Keeps
 
-- [`ask`](/commands/ask-and-continue) runs inside your harness conversation, so it travels upstream with the rest of it.
-- [`private`](/commands/private) does not. The question and the answer stay out of what your harness sends.
-
-[What Each Command Protects](/privacy/what-each-command-protects) lays this out command by command.
-
-## Private and Session Keep Different Things
-
-Both run the whole session through Nito, so neither conversation is sent to your harness's own model provider. What separates them is what stays on your machine afterwards.
-
-- [`private`](/commands/private), **with no question after it**, opens a session that keeps nothing. No prompt history, no transcript, nothing to resume. Close it and there is nothing left to find.
-- [`session`](/commands/session) keeps prompt history, transcripts, and resume state on your machine, so you can come back to the work. That record is yours, and anyone with access to your machine can read it.
-
-Either way, the work itself lives in your workspace like any other work. Running a task through Nito keeps the conversation out of what your harness sends upstream. It does not hide the files that task wrote from the next ordinary session you open in that workspace.
-
-## The Level Follows the Model
-
-There is no privacy toggle in the plugin. Each model in the catalog carries a privacy level, and you get that level by choosing that model. Picking a more private model is how you get a more private call.
-
-Because the level is a property of the model, it cannot drift.
-
-## The Four Levels, Briefly
-
-A ladder. Each rung keeps everything below it and adds one thing.
+The model that answers carries a privacy level, and you get that level by choosing that model. Each rung keeps everything below it and adds one thing.
 
 | Level | Adds |
 | :-- | :-- |
-| **Anonymous** | The frontier rung. The provider gets your request from Nito, without your identity attached. |
-| **Private** | The upstream provider is held to zero data retention. |
-| **Confidential** | Your call runs in a sealed environment you can verify with a signed attestation. |
-| **Encrypted** | Your data is encrypted to that sealed environment before it leaves your machine. Coming soon to the plugin. |
+| **Anonymous** | Frontier models. The provider gets your prompt without your identity attached. |
+| **Private** | Zero data retention enforced upstream, so the provider keeps nothing. |
+| **Confidential** | Everything in Private, inside a sealed environment that signs an attestation. |
+| **Encrypted** | Your prompt is encrypted to that sealed environment before it leaves your machine. Coming soon to the plugin. |
 
-Full detail, including what each protects and what it costs you, is in [The Four Levels](/privacy/levels).
+Because the level is a property of the model, it cannot drift. Full detail: [The Four Levels](/privacy/levels).
 
-## Attested, Not Asserted
+## Proof You Can Check
 
-The two strongest levels replace a promise with something you can check. A Confidential call runs inside a sealed environment that produces a **signed attestation**, and you can verify that attestation yourself rather than take the claim on trust.
+Private holds the provider to zero data retention. Confidential adds evidence on top: the sealed environment produces a **signed attestation** you can verify yourself, so you have proof of what ran as well as the retention guarantee.
 
-## What Nito Keeps, and What the Provider Keeps
+## What Nito Keeps
 
-These are two separate questions, and the levels answer them differently.
-
-Nito keeps operational metadata about a call, not its contents. Your questions, the replies, reasoning, tool payloads, and attachment contents are used to serve the request and are not stored by Nito. That holds at every level.
-
-The provider on the other end is the second question. At [Private](/privacy/levels/private) and above, the provider is held to zero data retention as well. At [Anonymous](/privacy/levels/anonymous) it is not: the frontier provider serving your request handles it under its own retention terms, with your identity detached.
+Operational metadata about a call, never its contents. Prompts, responses, reasoning, tool payloads, and attachment contents are used to serve the request and are not stored. That holds at every level.
 
 [Data Retention and Visibility](/privacy/data-retention-and-visibility) covers exactly what is kept and who can see what.

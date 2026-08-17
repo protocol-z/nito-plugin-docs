@@ -1,23 +1,17 @@
 ---
 title: "Data Retention and Visibility"
-description: "What Nito keeps about your calls (metadata only, by default), what it never persists, and who can see what across your harness and Nito."
+description: "Nito does not store the contents of your calls. What it does keep, and who can see what across your harness and the model provider."
 ---
 
 Two questions decide the privacy of any prompt: what is **kept**, and who can **see** it. This page answers both for the plugin.
 
 ## What Nito Keeps
 
-By default, Nito's posture is **metadata only**. It keeps operational metadata about a call so the service can run and bill correctly, not the contents of the call.
+**Nito does not store the contents of your calls.** Your prompts, the responses, reasoning, tool payloads, and attachment contents are used to serve the request and are never persisted. Conversation history, where it exists, lives on your machine.
 
-The following are used to serve your request and are **not persisted** by Nito:
+What Nito keeps is operational metadata, the minimum needed to run and bill the service.
 
-- Your prompts
-- The model's replies
-- Reasoning
-- Tool payloads
-- Attachment contents
-
-Inference responses are returned so they are not cached downstream, and where a conversation history exists it lives on the client side, not on Nito. This metadata-only default is the floor that every level builds on; the [Private](/privacy/levels) level adds the upstream provider being held to zero data retention on top.
+This holds at every level. [Private](/privacy/levels) adds the upstream provider being held to zero data retention on top of it.
 
 ## Who Can See What
 

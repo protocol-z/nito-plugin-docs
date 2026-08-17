@@ -11,14 +11,14 @@ description: "Run a single Nito question or a multi-model Fusion directly from t
 nito ask [prompt] [flags]
 ```
 
-A single question to a single Nito model. The answer prints to standard output.
+A single question to a single Nito-supported model. The answer prints to standard output.
 
 ```bash
 # Basic question
 nito ask "Summarize what a Merkle proof guarantees."
 
 # Pick a specific model
-nito ask --model openai/gpt-5.5 "Write fizzbuzz in Python."
+nito ask --model qwen/qwen3-coder "Write fizzbuzz in Python."
 
 # Attach a document and ask about it
 nito ask --file ./report.pdf "Summarize the top three risks."
@@ -31,7 +31,7 @@ nito ask --web-search off "What is 7 times 6?"
 
 | Flag | Default | Effect |
 | :-- | :-- | :-- |
-| `--model <id>` | your saved default | Choose the Nito model for this call. |
+| `--model <id>` | your saved default | Choose the Nito-supported model for this call. |
 | `--file <path>` | none | Attach a local image or document. Repeatable. |
 | `--web-search off\|auto\|on` | `on` | Hosted web search mode. |
 | `--web-fetch <on\|off>` | `on` | Allow hosted fetch of URLs you name. |
@@ -66,10 +66,10 @@ One prompt, two or three models, plus a synthesis. This is the client-side form 
 
 ```bash
 # Two or three models, one reconciled answer
-nito fusion --model openai/gpt-5.5 --model z-ai/glm-5.2 "Is this contract vulnerable to reentrancy?"
+nito fusion --model qwen/qwen3-coder --model z-ai/glm-5.2 "Is this contract vulnerable to reentrancy?"
 
 # Choose which model writes the synthesis
-nito fusion --model openai/gpt-5.5 --model z-ai/glm-5.2 --judge openai/gpt-5.5 "Stateless JWTs or server sessions?"
+nito fusion --model qwen/qwen3-coder --model z-ai/glm-5.2 --judge z-ai/glm-5.2 "Stateless JWTs or server sessions?"
 ```
 
 ### Options

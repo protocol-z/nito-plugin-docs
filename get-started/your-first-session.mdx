@@ -1,0 +1,58 @@
+---
+title: "Your First Session"
+description: "Open a session that runs entirely through Nito, and understand what it keeps."
+---
+
+<Note>
+Sessions need a **paid plan**. There is no session on the free allowance. See [What Paid Unlocks](/plans/what-paid-unlocks).
+</Note>
+
+`session` opens a separate harness session in your current workspace where every turn runs through Nito. Your ordinary session is untouched.
+
+## Run It
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```text
+    /nito:session
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```text
+    $nito:session
+    ```
+  </Tab>
+</Tabs>
+
+A new terminal opens with your workspace loaded. Work in it as you normally would. The model picker, agents, and tools all work, running against the Nito catalog. Without `--model` it uses your saved default.
+
+## What It Keeps, and Why
+
+A session keeps your prompt history, transcripts, and project state on your machine. That is the point of it. A session is meant to be lived in across many turns and returned to later, which is impossible without a record.
+
+So a session gives you routing privacy, not local privacy:
+
+- **Your harness provider never sees the work.** Every turn goes to Nito, at the privacy level of the model running it.
+- **Your machine keeps the record.** History and transcripts are stored the way your harness normally stores them, and Nito does not encrypt them.
+
+That trade is deliberate, and it is the whole difference from [`private`](/get-started/your-first-private-prompt).
+
+| | `private` with no prompt | `session` |
+| :-- | :-- | :-- |
+| Runs through Nito | Yes | Yes |
+| Harness provider sees it | No | No |
+| Keeps history on your machine | No | Yes |
+| Can you return to it | No | Yes |
+
+Reach for `private` when a turn should leave nothing behind. Reach for `session` when you want to keep the work.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Session (full reference)" icon="window" href="/commands/session">
+    Every option, what runs inside a session, and the first-release notes.
+  </Card>
+  <Card title="Session Launchers" icon="terminal" href="/cli/session-launchers">
+    Start the same session from your terminal.
+  </Card>
+</CardGroup>

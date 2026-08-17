@@ -1,9 +1,9 @@
 ---
 title: "What Each Command Protects"
-description: "Which Nito commands keep a question away from Anthropic and OpenAI, which do not, and exactly what each one covers."
+description: "Which Nito commands keep a prompt away from your harness provider, which do not, and exactly what each one covers."
 ---
 
-Privacy in the plugin is not one setting; different commands protect different things. This page is the command-by-command map of what leaves your harness and what does not.
+Different commands protect different things. This page is the command-by-command map of what your harness provider sees and what it does not.
 
 The key distinction is the [trust boundary](/privacy/overview): your harness can see some Nito prompts and not others, independent of the model's privacy level.
 
@@ -14,14 +14,14 @@ The key distinction is the [trust boundary](/privacy/overview): your harness can
 | [`ask`](/commands/ask-and-continue) | No, it runs in your harness conversation | Follows the model you choose |
 | [`private`](/commands/private) | Yes, that is its purpose | Follows the model you choose |
 | [`session`](/commands/session) | Yes, the whole session is Nito-routed | Follows the model you choose |
-| [`fusion`](/commands/fusion) | Runs on Nito; see level-mixing note below | Least-private participant sets the level |
+| [`fusion`](/commands/fusion) | Depends where you run it, see below | Least-private participant sets the level |
 | [`context`](/commands/context-and-mode) | Controls how much of your prompt's surroundings are sent | Not a model call |
 
 ## Ask
 
 `ask` runs **inside your current harness conversation**. That means your harness can see the `ask` prompt, the same way it sees anything else you type into that session. Its usefulness is model access: it reaches a model through Nito without switching your harness's model. Use it when the sensitivity of the prompt does not require keeping it from your harness.
 
-The Nito model's own privacy level still applies to the call once it reaches Nito, following the model you chose.
+The Nito-supported model's own privacy level still applies to the call once it reaches Nito, following the model you chose.
 
 ## Private
 
@@ -38,7 +38,14 @@ A [`session`](/commands/session) is a whole harness session powered entirely by 
 
 ## Fusion
 
-[`fusion`](/commands/fusion) sends one prompt to two or three models in the Nito catalog. Its privacy has one rule worth calling out: when the participants span different levels, **the run lands at the least-private level among them**. A single Anonymous participant pulls the whole Fusion to Anonymous. Keep every participant at the level you need if the prompt is sensitive.
+[`fusion`](/commands/fusion) sends one prompt to two or three models in the Nito catalog. Two things decide its privacy.
+
+**Where you run it.** Fusion inherits the privacy of whatever it runs inside.
+
+- **Inline**, in your ordinary harness conversation, it behaves like `ask`: your harness sends the prompt and the answers upstream, and they sit in its normal history.
+- **Inside a `private` session or a Nito-routed [`session`](/commands/session)**, it does not. The run stays out of what your harness sends, and it keeps whatever that session keeps, which is nothing in a no-prompt `private` session and your history in a `session`.
+
+**The levels of the participants.** Anonymous and Private models can mix, and the run lands at the least-private level among them, so a single Anonymous participant pulls the whole Fusion to Anonymous. A Confidential participant cannot be mixed with a lower level at all; that combination is refused rather than quietly downgraded.
 
 ## Context
 
@@ -49,4 +56,4 @@ A [`session`](/commands/session) is a whole harness session powered entirely by 
 Two questions, two controls:
 
 1. **Should my harness see this prompt?** If not, use `private` (or a `session`), not `ask`.
-2. **How protected must the call itself be?** Choose a model at the [level](/privacy/levels) that matches, since [the level follows the model](/privacy/levels).
+2. **How private must the call itself be?** Choose a model at the [level](/privacy/levels) that matches, since [the level follows the model](/privacy/levels).

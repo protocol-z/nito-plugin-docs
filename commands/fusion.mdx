@@ -1,9 +1,9 @@
 ---
 title: "Fusion"
-description: "Send one prompt to two or three models, then get a synthesized answer that reconciles them and shows where they disagree."
+description: "Send one prompt to two or three models and get back each answer plus a synthesis that combines them."
 ---
 
-`fusion` sends one prompt to **two or three** models at once, then runs a synthesis pass that reconciles their answers into one and shows you where they agreed and disagreed. It is the command to reach for on a contested decision, where a single model's confident answer would hide that the question is genuinely open.
+`fusion` sends one prompt to **two or three** models at once, then a judge model synthesizes their answers into one. It is the command to reach for on a decision where a single model's confident answer would hide that the question is genuinely open.
 
 <Note>
 Fusion requires a **paid plan**. See [What Paid Unlocks](/plans/what-paid-unlocks).
@@ -24,14 +24,14 @@ Fusion requires a **paid plan**. See [What Paid Unlocks](/plans/what-paid-unlock
   </Tab>
 </Tabs>
 
-You name **two or three** participant models as positional arguments. Fewer than two or more than three is rejected with a clear message, and the models must be distinct.
+You name **two or three** participant models as positional arguments, and they must be distinct. More than three is rejected with a clear message. Run `fusion` with no arguments at all and it walks you through picking them instead of erroring.
 
 ### Options
 
 | Option | What it does |
 | :-- | :-- |
 | `<model-id> <model-id> [model-id]` | The two or three participant models. |
-| `--judge <model-id>` | The model that runs the synthesis. Defaults to one of the participants. |
+| `--judge <model-id>` | The model that runs the synthesis. Defaults to the first participant you named. |
 | `--file <path>` | Attach a local file to every participant. Repeatable. |
 | `--web-search` / `--web-fetch` | Control server tools per participant. See [Web Search](/features/server-side-tools/web-search). |
 
@@ -47,14 +47,14 @@ Participants must share a compatible privacy level:
 A Fusion result has two parts:
 
 1. **Each participant, listed separately**, with the model, timing, tokens, and whether web search was used.
-2. **A synthesis** that gives a single reconciled answer, and, importantly, a **"where the candidates disagree"** section that names the split and which way it leans.
+2. **A synthesis**: one answer combining their strengths. The judge resolves disagreements where it can, and flags them briefly where it cannot, when they are material to the answer.
 
-That disagreement map is the point: you see *that* a decision is contested and exactly where, instead of one model's opinion presented as settled.
+Seeing each participant's answer next to the synthesis is what tells you whether a decision was settled or contested.
 
 ## Example
 
 ```text
-/nito:fusion anthropic/claude-sonnet-5 anthropic/claude-haiku-4-5 google/gemini-3.5-flash -- For a new multi-tenant SaaS API, should auth be stateless JWTs or server-side sessions? Answer in 3 sentences.
+/nito:fusion qwen/qwen3-coder z-ai/glm-5.2 google/gemini-3.5-flash -- For a new multi-tenant SaaS API, should auth be stateless JWTs or server-side sessions? Answer in 3 sentences.
 ```
 
 The result lists each model's answer, then a synthesized recommendation with the tradeoff and a note on where the three models diverged.

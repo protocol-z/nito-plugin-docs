@@ -3,8 +3,6 @@ title: "Privacy Levels in Depth"
 description: "The four privacy levels as a ladder, and how the level follows the model you pick."
 ---
 
-Nito lets you choose how private each call is, and that choice rides on the model you pick rather than being set once for your session. This section is the reference: one page per level, covering what each protects, how you reach it, and what you give up to get it.
-
 ## Each Level Builds on the Last
 
 Read the four as a ladder. Each rung adds a stronger guarantee and, in exchange, narrows the models and features available to you. Climb only as high as the call needs.
@@ -15,8 +13,6 @@ Read the four as a ladder. Each rung adds a stronger guarantee and, in exchange,
 | **Private** | Pick a model whose level is Private | Upstream provider held to zero data retention |
 | **Confidential** | Pick a model that offers Confidential | Sealed execution with a verifiable attestation |
 | **Encrypted** | Coming soon to the plugin | Client-side encryption to the sealed environment |
-
-Confidential is the top of the ladder you can reach from this release. Encrypted is described in full on its own page, and the plugin refuses an `:encrypted` model until client support ships.
 
 ## The Level Follows the Model
 
@@ -32,7 +28,7 @@ z-ai/glm-5.2:encrypted       the Encrypted entry, coming soon
 
 One underlying model, several entries, one level each. You pick the level by picking the entry, and you never add the marker yourself: it is part of a name the catalog gives you. See [Model ID Convention](/models/model-id-convention).
 
-Browse with the [`models`](/commands/choosing-a-model) command, then set your model with `model` or `--model`. The level comes with it, which means changing the privacy of a call means changing the model. Nothing else.
+Browse with the [`models`](/commands/choosing-a-model) command, then set your model with `model` or `--model`. Set it once and it stays until you change it, and the level comes with it.
 
 ## Why a Model Reaches Only Certain Levels
 

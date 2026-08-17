@@ -1,13 +1,11 @@
 ---
 title: "Model List"
-description: "The current Nito catalog, grouped by privacy level, with context window, price, and capabilities. The live list is always what you see when you browse."
+description: "The current Nito catalog, grouped by privacy level, with context window, price, and capabilities."
 mode: "wide"
 ---
 
-The models you can reach through the plugin, grouped by privacy level. This is a **snapshot**; the catalog is discovered live and changes over time, so use [`models`](/commands/choosing-a-model) for the authoritative list on your account.
-
 <Note>
-Snapshot of **2026-08-13**. **Price /1M** is USD per one million tokens, shown as **input · output**. The **privacy level** is shown as its own section, because [the level follows the model you choose](/privacy/levels). See [Pricing](/models/pricing) for how cost is structured.
+Snapshot of **2026-08-13**. Run [`models`](/commands/choosing-a-model) for the live list on your account. **Price /1M** is USD per one million tokens, shown as **input · output**. The **privacy level** is shown as its own section, because [the level follows the model you choose](/privacy/levels). See [Pricing](/models/pricing) for how cost is structured.
 </Note>
 
 Capabilities in the table:
@@ -83,14 +81,14 @@ Set one as your default, or use it for a single call:
 <Tabs>
   <Tab title="Claude Code">
     ```text
-    /nito:model anthropic/claude-sonnet-5
-    /nito:ask --model openai/gpt-5.5 Summarize this thread.
+    /nito:model z-ai/glm-5.2
+    /nito:ask --model qwen/qwen3-235b-a22b-2507 Summarize this thread.
     ```
   </Tab>
   <Tab title="Codex">
     ```text
-    $nito:model anthropic/claude-sonnet-5
-    $nito:ask --model openai/gpt-5.5 Summarize this thread.
+    $nito:model z-ai/glm-5.2
+    $nito:ask --model qwen/qwen3-235b-a22b-2507 Summarize this thread.
     ```
   </Tab>
 </Tabs>
