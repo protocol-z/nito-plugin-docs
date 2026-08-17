@@ -21,6 +21,18 @@ Use `--no-browser` on a headless machine or over SSH, then open the printed URL 
 
 ## Signing In
 
+There is one credential for everyday use. How you create it depends on how you use Nito, and both paths open your browser for approval and store only a credential reference in your operating system keychain, never a password in the terminal.
+
+**Using the plugin inside Claude Code or Codex?** Sign-in is part of setup. Installing the host integration signs you in at the same time:
+
+```bash
+nito setup claude   # or: nito setup codex
+```
+
+Setup opens your browser once. Sign in and approve, and your keychain credential is created. See [Install in Claude Code](/get-started/install-claude-code).
+
+**Using the terminal directly** (`nito ask`, `nito fusion`, the MCP bridge)? Sign in with `nito agent`:
+
 ```bash
 # Sign in through your browser
 nito agent login
@@ -32,11 +44,27 @@ nito agent status
 nito agent logout
 ```
 
-`nito agent status` reports your profile, environment, authentication method, plan, and subscription state. Run it first whenever a command says you are not connected.
+Both paths land on the same agent credential, so you do not sign in twice. `nito agent status` reports your profile, environment, authentication method, plan, and subscription state. Run it first whenever a command says you are not connected.
 
 <Note>
-Nito never asks for a password in the terminal. Approval always happens in the browser, and only a credential reference is kept locally.
+Nito never asks for a password in the terminal. Approval always happens in the browser, and only a credential reference is kept locally. On a headless machine or over SSH, `nito agent login --method api-key --stdin` reads an API key from standard input instead of opening a browser.
 </Note>
+
+### Signing In to the Gateway Directly
+
+`nito auth login` signs the CLI in to the Nito gateway on its own, separate from the agent credential above. It targets the default Nito gateway, and `--base-url` points it at a specific one. Most plugin and terminal users only need `nito agent login`; reach for this when you are signing the CLI in to a particular gateway.
+
+```bash
+# Sign in to the default gateway through your browser
+nito auth login
+
+# Device-code sign-in for a headless machine or SSH
+nito auth login --no-browser
+
+# Check or clear this sign-in
+nito auth status
+nito auth logout
+```
 
 ## Browsing Models
 
