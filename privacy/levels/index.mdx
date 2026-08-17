@@ -14,7 +14,9 @@ Read the four as a ladder. Each rung adds a stronger guarantee and, in exchange,
 | **Anonymous** | Pick a model whose level is Anonymous | Your identity detached before the provider sees the request |
 | **Private** | Pick a model whose level is Private | Upstream provider held to zero data retention |
 | **Confidential** | Pick a model that offers Confidential | Sealed execution with a verifiable attestation |
-| **Encrypted** | Pick a model that offers Encrypted | Client-side encryption to the sealed environment |
+| **Encrypted** | Coming soon to the plugin | Client-side encryption to the sealed environment |
+
+Confidential is the top of the ladder you can reach from this release. Encrypted is described in full on its own page, and the plugin refuses an `:encrypted` model until client support ships.
 
 ## The Level Follows the Model
 
@@ -25,7 +27,7 @@ Anonymous and Private are a model's own level, and its ID is just provider and m
 ```text
 z-ai/glm-5.2                 the Private entry
 z-ai/glm-5.2:confidential    the Confidential entry
-z-ai/glm-5.2:encrypted       the Encrypted entry
+z-ai/glm-5.2:encrypted       the Encrypted entry, coming soon
 ```
 
 One underlying model, several entries, one level each. You pick the level by picking the entry, and you never add the marker yourself: it is part of a name the catalog gives you. See [Model ID Convention](/models/model-id-convention).
@@ -58,6 +60,6 @@ If a call cannot be served at the chosen model's level, it **fails with a clear 
     Sealed execution with an attestation you can fetch and verify.
   </Card>
   <Card title="Encrypted" href="/privacy/levels/encrypted">
-    The top rung, adding client-side encryption to the sealed environment.
+    The top rung, adding client-side encryption to the sealed environment. Coming soon to the plugin.
   </Card>
 </CardGroup>

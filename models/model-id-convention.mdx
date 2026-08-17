@@ -30,10 +30,12 @@ Some models also appear in a stronger variant, whose ID carries a marker at the 
 ```text
 z-ai/glm-5.2                 # the Private entry
 z-ai/glm-5.2:confidential    # the Confidential entry
-z-ai/glm-5.2:encrypted       # the Encrypted entry
+z-ai/glm-5.2:encrypted       # the Encrypted entry, coming soon
 ```
 
-These are separate catalog entries. You do not invent the marker or staple it onto any model; it is part of the name of a model that offers that level, and you select the entry the same way you select any model. Choosing the `:confidential` entry runs your call in a sealed environment you can verify. Choosing the `:encrypted` entry adds client-side encryption on top, and turns off web search, file attachments, tools, and streaming. The [Model List](/models/all-models) shows which models have each entry.
+These are separate catalog entries. You do not invent the marker or staple it onto any model; it is part of the name of a model that offers that level, and you select the entry the same way you select any model. Choosing the `:confidential` entry runs your call in a sealed environment you can verify. The [Model List](/models/all-models) shows which models carry it.
+
+The `:encrypted` marker is part of the same convention, and the plugin cannot run one yet. Choosing an `:encrypted` entry returns a message pointing you back to Anonymous, Private, and Confidential. When client support ships, it will add client-side encryption on top of Confidential and turn off web search, file attachments, tools, and streaming. See [Encrypted](/privacy/levels/encrypted).
 
 ## The Level Is Part of the Model
 
