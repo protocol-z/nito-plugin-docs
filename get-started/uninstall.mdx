@@ -1,9 +1,9 @@
 ---
 title: "Uninstall"
-description: "Remove the plugin from your harness, sign out, and remove the command line tool."
+description: "Remove the plugin from your harness, sign out, remove the command line tool, and clear what a session left on disk."
 ---
 
-Removal is three parts: take the plugin out of your harness, sign out, and remove the command line tool.
+Removal is four parts: take the plugin out of your harness, sign out, remove the command line tool, and delete anything a session left on disk.
 
 <Steps>
   <Step title="Remove the plugin">
@@ -34,10 +34,21 @@ Removal is three parts: take the plugin out of your harness, sign out, and remov
     npm uninstall -g nito-ai
     ```
   </Step>
+
+  <Step title="Delete local session data">
+    A [session](/commands/session) keeps prompt history and transcripts in a dedicated Nito profile directory. The steps above leave that directory in place, so remove it separately:
+
+    ```bash
+    # Delete prompt history and transcripts from Nito session profiles
+    rm -rf ~/.nito/hosts
+    ```
+
+    Deletion is permanent. Skip this step to keep the record of work you did inside a session.
+  </Step>
 </Steps>
 
 <Note>
-This removes Nito from your machine. It does not delete your Nito account or stop any billing. Manage those from your account in the browser, see [Upgrade and Manage](/plans/upgrade-and-manage).
+These four steps remove Nito from your machine. Your Nito account and any billing carry on as they are; manage those from your account in the browser, see [Upgrade and Manage](/plans/upgrade-and-manage).
 </Note>
 
 ## Related
