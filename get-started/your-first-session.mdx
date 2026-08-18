@@ -33,7 +33,7 @@ A session keeps your prompt history, transcripts, and project state on your mach
 So a session gives you routing privacy, not local privacy:
 
 - **Your harness provider never sees the work.** Every turn goes to Nito, at the privacy level of the model running it.
-- **Your machine keeps the record.** History and transcripts are stored the way your harness normally stores them, and Nito does not encrypt them.
+- **Your machine keeps the record.** History and transcripts go to a dedicated Nito profile directory at `~/.nito/hosts/<host>/<profile>/`, separate from your harness's own configuration. The directory is restricted to your user account, and Nito does not encrypt what is inside it. Deleting it removes the record. See [Uninstall](/get-started/uninstall).
 
 That trade is deliberate, and it is the whole difference from [`private`](/get-started/your-first-private-prompt).
 
